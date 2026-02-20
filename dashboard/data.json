@@ -1,0 +1,1558 @@
+{
+  "runs": [
+    {
+      "id": "260220-2113",
+      "total_posts": 21,
+      "results": {
+        "DOW": 6,
+        "QQQ": 7,
+        "DPZ": 9,
+        "NVDA": 11,
+        "HOOD": 6,
+        "OPEN": 16,
+        "PLTR": 11,
+        "RDDT": 8,
+        "COIN": 8
+      }
+    },
+    {
+      "id": "260220-2137",
+      "total_posts": 21,
+      "results": {
+        "DOW": 6,
+        "QQQ": 9,
+        "DPZ": 10,
+        "NVDA": 8,
+        "OPEN": 16,
+        "PLTR": 11,
+        "RDDT": 8,
+        "COIN": 8
+      }
+    }
+  ],
+  "top5": [
+    {
+      "symbol": "DOW",
+      "count": 6,
+      "trend_pct": 0.0,
+      "history": [
+        {
+          "run": "260220-2113",
+          "count": 6
+        },
+        {
+          "run": "260220-2137",
+          "count": 6
+        }
+      ],
+      "sentiment": {
+        "score": 1.0,
+        "label": "bullish",
+        "bullish": 1,
+        "bearish": 0,
+        "total_words": 103
+      },
+      "momentum_score": 85.0,
+      "company_name": "Dow Inc.",
+      "company_desc": "Chemiekonzern: Kunststoffe, Beschichtungen, Industriechemikalien.",
+      "sector": "Chemie",
+      "prices": [
+        {
+          "date": "2026-01-21",
+          "close": 28.41
+        },
+        {
+          "date": "2026-01-22",
+          "close": 28.33
+        },
+        {
+          "date": "2026-01-23",
+          "close": 28.25
+        },
+        {
+          "date": "2026-01-26",
+          "close": 28.18
+        },
+        {
+          "date": "2026-01-27",
+          "close": 27.81
+        },
+        {
+          "date": "2026-01-28",
+          "close": 27.78
+        },
+        {
+          "date": "2026-01-29",
+          "close": 27.16
+        },
+        {
+          "date": "2026-01-30",
+          "close": 27.55
+        },
+        {
+          "date": "2026-02-02",
+          "close": 28.88
+        },
+        {
+          "date": "2026-02-03",
+          "close": 30.49
+        },
+        {
+          "date": "2026-02-04",
+          "close": 32.4
+        },
+        {
+          "date": "2026-02-05",
+          "close": 30.6
+        },
+        {
+          "date": "2026-02-06",
+          "close": 31.78
+        },
+        {
+          "date": "2026-02-09",
+          "close": 32.08
+        },
+        {
+          "date": "2026-02-10",
+          "close": 33.6
+        },
+        {
+          "date": "2026-02-11",
+          "close": 34.0
+        },
+        {
+          "date": "2026-02-12",
+          "close": 32.65
+        },
+        {
+          "date": "2026-02-13",
+          "close": 32.49
+        },
+        {
+          "date": "2026-02-17",
+          "close": 31.42
+        },
+        {
+          "date": "2026-02-18",
+          "close": 31.58
+        },
+        {
+          "date": "2026-02-19",
+          "close": 31.39
+        },
+        {
+          "date": "2026-02-20",
+          "close": 30.51
+        }
+      ]
+    },
+    {
+      "symbol": "QQQ",
+      "count": 9,
+      "trend_pct": 28.6,
+      "history": [
+        {
+          "run": "260220-2113",
+          "count": 7
+        },
+        {
+          "run": "260220-2137",
+          "count": 9
+        }
+      ],
+      "sentiment": {
+        "score": 0.0,
+        "label": "neutral",
+        "bullish": 2,
+        "bearish": 2,
+        "total_words": 232
+      },
+      "momentum_score": 82.9,
+      "company_name": "Invesco QQQ Trust",
+      "company_desc": "ETF auf den Nasdaq-100 Index. Top-100 Tech-Aktien der USA.",
+      "sector": "ETF/Tech",
+      "prices": [
+        {
+          "date": "2026-01-21",
+          "close": 616.28
+        },
+        {
+          "date": "2026-01-22",
+          "close": 620.76
+        },
+        {
+          "date": "2026-01-23",
+          "close": 622.72
+        },
+        {
+          "date": "2026-01-26",
+          "close": 625.46
+        },
+        {
+          "date": "2026-01-27",
+          "close": 631.13
+        },
+        {
+          "date": "2026-01-28",
+          "close": 633.22
+        },
+        {
+          "date": "2026-01-29",
+          "close": 629.43
+        },
+        {
+          "date": "2026-01-30",
+          "close": 621.87
+        },
+        {
+          "date": "2026-02-02",
+          "close": 626.14
+        },
+        {
+          "date": "2026-02-03",
+          "close": 616.52
+        },
+        {
+          "date": "2026-02-04",
+          "close": 605.75
+        },
+        {
+          "date": "2026-02-05",
+          "close": 597.03
+        },
+        {
+          "date": "2026-02-06",
+          "close": 609.65
+        },
+        {
+          "date": "2026-02-09",
+          "close": 614.32
+        },
+        {
+          "date": "2026-02-10",
+          "close": 611.47
+        },
+        {
+          "date": "2026-02-11",
+          "close": 613.11
+        },
+        {
+          "date": "2026-02-12",
+          "close": 600.64
+        },
+        {
+          "date": "2026-02-13",
+          "close": 601.92
+        },
+        {
+          "date": "2026-02-17",
+          "close": 601.3
+        },
+        {
+          "date": "2026-02-18",
+          "close": 605.79
+        },
+        {
+          "date": "2026-02-19",
+          "close": 603.47
+        },
+        {
+          "date": "2026-02-20",
+          "close": 608.81
+        }
+      ]
+    },
+    {
+      "symbol": "DPZ",
+      "count": 10,
+      "trend_pct": 11.1,
+      "history": [
+        {
+          "run": "260220-2113",
+          "count": 9
+        },
+        {
+          "run": "260220-2137",
+          "count": 10
+        }
+      ],
+      "sentiment": {
+        "score": 0.25,
+        "label": "bullish",
+        "bullish": 5,
+        "bearish": 3,
+        "total_words": 113
+      },
+      "momentum_score": 81.7,
+      "company_name": "Domino's Pizza",
+      "company_desc": "Weltweit groesste Pizza-Lieferkette mit ueber 20.000 Filialen.",
+      "sector": "Gastronomie",
+      "prices": [
+        {
+          "date": "2026-01-21",
+          "close": 398.92
+        },
+        {
+          "date": "2026-01-22",
+          "close": 405.33
+        },
+        {
+          "date": "2026-01-23",
+          "close": 411.5
+        },
+        {
+          "date": "2026-01-26",
+          "close": 413.91
+        },
+        {
+          "date": "2026-01-27",
+          "close": 413.87
+        },
+        {
+          "date": "2026-01-28",
+          "close": 405.37
+        },
+        {
+          "date": "2026-01-29",
+          "close": 407.08
+        },
+        {
+          "date": "2026-01-30",
+          "close": 410.33
+        },
+        {
+          "date": "2026-02-02",
+          "close": 409.22
+        },
+        {
+          "date": "2026-02-03",
+          "close": 401.11
+        },
+        {
+          "date": "2026-02-04",
+          "close": 401.73
+        },
+        {
+          "date": "2026-02-05",
+          "close": 393.43
+        },
+        {
+          "date": "2026-02-06",
+          "close": 394.88
+        },
+        {
+          "date": "2026-02-09",
+          "close": 392.16
+        },
+        {
+          "date": "2026-02-10",
+          "close": 389.73
+        },
+        {
+          "date": "2026-02-11",
+          "close": 384.0
+        },
+        {
+          "date": "2026-02-12",
+          "close": 381.78
+        },
+        {
+          "date": "2026-02-13",
+          "close": 375.5
+        },
+        {
+          "date": "2026-02-17",
+          "close": 373.5
+        },
+        {
+          "date": "2026-02-18",
+          "close": 382.99
+        },
+        {
+          "date": "2026-02-19",
+          "close": 385.13
+        },
+        {
+          "date": "2026-02-20",
+          "close": 384.61
+        }
+      ]
+    },
+    {
+      "symbol": "PLTR",
+      "count": 11,
+      "trend_pct": 0.0,
+      "history": [
+        {
+          "run": "260220-2113",
+          "count": 11
+        },
+        {
+          "run": "260220-2137",
+          "count": 11
+        }
+      ],
+      "sentiment": {
+        "score": 0.2,
+        "label": "neutral",
+        "bullish": 3,
+        "bearish": 2,
+        "total_words": 235
+      },
+      "momentum_score": 79.0,
+      "company_name": "Palantir Technologies",
+      "company_desc": "Big-Data-Analyse und KI-Software fuer Regierungen und Unternehmen.",
+      "sector": "Tech/KI",
+      "prices": [
+        {
+          "date": "2026-01-21",
+          "close": 165.33
+        },
+        {
+          "date": "2026-01-22",
+          "close": 165.9
+        },
+        {
+          "date": "2026-01-23",
+          "close": 169.6
+        },
+        {
+          "date": "2026-01-26",
+          "close": 167.47
+        },
+        {
+          "date": "2026-01-27",
+          "close": 165.7
+        },
+        {
+          "date": "2026-01-28",
+          "close": 157.35
+        },
+        {
+          "date": "2026-01-29",
+          "close": 151.86
+        },
+        {
+          "date": "2026-01-30",
+          "close": 146.59
+        },
+        {
+          "date": "2026-02-02",
+          "close": 147.76
+        },
+        {
+          "date": "2026-02-03",
+          "close": 157.88
+        },
+        {
+          "date": "2026-02-04",
+          "close": 139.54
+        },
+        {
+          "date": "2026-02-05",
+          "close": 130.01
+        },
+        {
+          "date": "2026-02-06",
+          "close": 135.9
+        },
+        {
+          "date": "2026-02-09",
+          "close": 142.91
+        },
+        {
+          "date": "2026-02-10",
+          "close": 139.51
+        },
+        {
+          "date": "2026-02-11",
+          "close": 135.68
+        },
+        {
+          "date": "2026-02-12",
+          "close": 129.13
+        },
+        {
+          "date": "2026-02-13",
+          "close": 131.41
+        },
+        {
+          "date": "2026-02-17",
+          "close": 133.02
+        },
+        {
+          "date": "2026-02-18",
+          "close": 135.38
+        },
+        {
+          "date": "2026-02-19",
+          "close": 134.89
+        },
+        {
+          "date": "2026-02-20",
+          "close": 135.24
+        }
+      ]
+    },
+    {
+      "symbol": "RDDT",
+      "count": 8,
+      "trend_pct": 0.0,
+      "history": [
+        {
+          "run": "260220-2113",
+          "count": 8
+        },
+        {
+          "run": "260220-2137",
+          "count": 8
+        }
+      ],
+      "sentiment": {
+        "score": 0.2,
+        "label": "neutral",
+        "bullish": 3,
+        "bearish": 2,
+        "total_words": 184
+      },
+      "momentum_score": 79.0,
+      "company_name": "Reddit Inc.",
+      "company_desc": "Social-Media-Plattform mit Forum-Communities (Subreddits). IPO 2024.",
+      "sector": "Tech/Social",
+      "prices": [
+        {
+          "date": "2026-01-21",
+          "close": 210.13
+        },
+        {
+          "date": "2026-01-22",
+          "close": 214.54
+        },
+        {
+          "date": "2026-01-23",
+          "close": 218.88
+        },
+        {
+          "date": "2026-01-26",
+          "close": 213.63
+        },
+        {
+          "date": "2026-01-27",
+          "close": 196.3
+        },
+        {
+          "date": "2026-01-28",
+          "close": 193.14
+        },
+        {
+          "date": "2026-01-29",
+          "close": 190.05
+        },
+        {
+          "date": "2026-01-30",
+          "close": 180.27
+        },
+        {
+          "date": "2026-02-02",
+          "close": 177.15
+        },
+        {
+          "date": "2026-02-03",
+          "close": 165.41
+        },
+        {
+          "date": "2026-02-04",
+          "close": 152.69
+        },
+        {
+          "date": "2026-02-05",
+          "close": 151.05
+        },
+        {
+          "date": "2026-02-06",
+          "close": 139.83
+        },
+        {
+          "date": "2026-02-09",
+          "close": 141.74
+        },
+        {
+          "date": "2026-02-10",
+          "close": 149.98
+        },
+        {
+          "date": "2026-02-11",
+          "close": 139.29
+        },
+        {
+          "date": "2026-02-12",
+          "close": 131.07
+        },
+        {
+          "date": "2026-02-13",
+          "close": 139.65
+        },
+        {
+          "date": "2026-02-17",
+          "close": 139.23
+        },
+        {
+          "date": "2026-02-18",
+          "close": 147.46
+        },
+        {
+          "date": "2026-02-19",
+          "close": 146.13
+        },
+        {
+          "date": "2026-02-20",
+          "close": 150.14
+        }
+      ]
+    }
+  ],
+  "all_symbols": {
+    "DOW": [
+      {
+        "run": "260220-2113",
+        "count": 6
+      },
+      {
+        "run": "260220-2137",
+        "count": 6
+      }
+    ],
+    "QQQ": [
+      {
+        "run": "260220-2113",
+        "count": 7
+      },
+      {
+        "run": "260220-2137",
+        "count": 9
+      }
+    ],
+    "DPZ": [
+      {
+        "run": "260220-2113",
+        "count": 9
+      },
+      {
+        "run": "260220-2137",
+        "count": 10
+      }
+    ],
+    "NVDA": [
+      {
+        "run": "260220-2113",
+        "count": 11
+      },
+      {
+        "run": "260220-2137",
+        "count": 8
+      }
+    ],
+    "HOOD": [
+      {
+        "run": "260220-2113",
+        "count": 6
+      }
+    ],
+    "OPEN": [
+      {
+        "run": "260220-2113",
+        "count": 16
+      },
+      {
+        "run": "260220-2137",
+        "count": 16
+      }
+    ],
+    "PLTR": [
+      {
+        "run": "260220-2113",
+        "count": 11
+      },
+      {
+        "run": "260220-2137",
+        "count": 11
+      }
+    ],
+    "RDDT": [
+      {
+        "run": "260220-2113",
+        "count": 8
+      },
+      {
+        "run": "260220-2137",
+        "count": 8
+      }
+    ],
+    "COIN": [
+      {
+        "run": "260220-2113",
+        "count": 8
+      },
+      {
+        "run": "260220-2137",
+        "count": 8
+      }
+    ]
+  },
+  "latest_run": "260220-2137",
+  "total_runs": 2,
+  "generated": "2026-02-20 22:07",
+  "budget": {
+    "monthly_eur": 200.0,
+    "allocation": [
+      {
+        "symbol": "DOW",
+        "amount_eur": 41.71,
+        "weight_pct": 20.9,
+        "isin": "US2605571031",
+        "flatex_url": "https://www.flatex.de/suche?q=US2605571031"
+      },
+      {
+        "symbol": "QQQ",
+        "amount_eur": 40.68,
+        "weight_pct": 20.3,
+        "isin": "US46090E1038",
+        "flatex_url": "https://www.flatex.de/suche?q=US46090E1038"
+      },
+      {
+        "symbol": "DPZ",
+        "amount_eur": 40.09,
+        "weight_pct": 20.0,
+        "isin": "US25754A2015",
+        "flatex_url": "https://www.flatex.de/suche?q=US25754A2015"
+      },
+      {
+        "symbol": "PLTR",
+        "amount_eur": 38.76,
+        "weight_pct": 19.4,
+        "isin": "US69608A1088",
+        "flatex_url": "https://www.flatex.de/suche?q=US69608A1088"
+      },
+      {
+        "symbol": "RDDT",
+        "amount_eur": 38.76,
+        "weight_pct": 19.4,
+        "isin": "US75734B1008",
+        "flatex_url": "https://www.flatex.de/suche?q=US75734B1008"
+      }
+    ]
+  },
+  "stock_prices": {
+    "DOW": [
+      {
+        "date": "2026-01-21",
+        "close": 28.41
+      },
+      {
+        "date": "2026-01-22",
+        "close": 28.33
+      },
+      {
+        "date": "2026-01-23",
+        "close": 28.25
+      },
+      {
+        "date": "2026-01-26",
+        "close": 28.18
+      },
+      {
+        "date": "2026-01-27",
+        "close": 27.81
+      },
+      {
+        "date": "2026-01-28",
+        "close": 27.78
+      },
+      {
+        "date": "2026-01-29",
+        "close": 27.16
+      },
+      {
+        "date": "2026-01-30",
+        "close": 27.55
+      },
+      {
+        "date": "2026-02-02",
+        "close": 28.88
+      },
+      {
+        "date": "2026-02-03",
+        "close": 30.49
+      },
+      {
+        "date": "2026-02-04",
+        "close": 32.4
+      },
+      {
+        "date": "2026-02-05",
+        "close": 30.6
+      },
+      {
+        "date": "2026-02-06",
+        "close": 31.78
+      },
+      {
+        "date": "2026-02-09",
+        "close": 32.08
+      },
+      {
+        "date": "2026-02-10",
+        "close": 33.6
+      },
+      {
+        "date": "2026-02-11",
+        "close": 34.0
+      },
+      {
+        "date": "2026-02-12",
+        "close": 32.65
+      },
+      {
+        "date": "2026-02-13",
+        "close": 32.49
+      },
+      {
+        "date": "2026-02-17",
+        "close": 31.42
+      },
+      {
+        "date": "2026-02-18",
+        "close": 31.58
+      },
+      {
+        "date": "2026-02-19",
+        "close": 31.39
+      },
+      {
+        "date": "2026-02-20",
+        "close": 30.51
+      }
+    ],
+    "QQQ": [
+      {
+        "date": "2026-01-21",
+        "close": 616.28
+      },
+      {
+        "date": "2026-01-22",
+        "close": 620.76
+      },
+      {
+        "date": "2026-01-23",
+        "close": 622.72
+      },
+      {
+        "date": "2026-01-26",
+        "close": 625.46
+      },
+      {
+        "date": "2026-01-27",
+        "close": 631.13
+      },
+      {
+        "date": "2026-01-28",
+        "close": 633.22
+      },
+      {
+        "date": "2026-01-29",
+        "close": 629.43
+      },
+      {
+        "date": "2026-01-30",
+        "close": 621.87
+      },
+      {
+        "date": "2026-02-02",
+        "close": 626.14
+      },
+      {
+        "date": "2026-02-03",
+        "close": 616.52
+      },
+      {
+        "date": "2026-02-04",
+        "close": 605.75
+      },
+      {
+        "date": "2026-02-05",
+        "close": 597.03
+      },
+      {
+        "date": "2026-02-06",
+        "close": 609.65
+      },
+      {
+        "date": "2026-02-09",
+        "close": 614.32
+      },
+      {
+        "date": "2026-02-10",
+        "close": 611.47
+      },
+      {
+        "date": "2026-02-11",
+        "close": 613.11
+      },
+      {
+        "date": "2026-02-12",
+        "close": 600.64
+      },
+      {
+        "date": "2026-02-13",
+        "close": 601.92
+      },
+      {
+        "date": "2026-02-17",
+        "close": 601.3
+      },
+      {
+        "date": "2026-02-18",
+        "close": 605.79
+      },
+      {
+        "date": "2026-02-19",
+        "close": 603.47
+      },
+      {
+        "date": "2026-02-20",
+        "close": 608.81
+      }
+    ],
+    "DPZ": [
+      {
+        "date": "2026-01-21",
+        "close": 398.92
+      },
+      {
+        "date": "2026-01-22",
+        "close": 405.33
+      },
+      {
+        "date": "2026-01-23",
+        "close": 411.5
+      },
+      {
+        "date": "2026-01-26",
+        "close": 413.91
+      },
+      {
+        "date": "2026-01-27",
+        "close": 413.87
+      },
+      {
+        "date": "2026-01-28",
+        "close": 405.37
+      },
+      {
+        "date": "2026-01-29",
+        "close": 407.08
+      },
+      {
+        "date": "2026-01-30",
+        "close": 410.33
+      },
+      {
+        "date": "2026-02-02",
+        "close": 409.22
+      },
+      {
+        "date": "2026-02-03",
+        "close": 401.11
+      },
+      {
+        "date": "2026-02-04",
+        "close": 401.73
+      },
+      {
+        "date": "2026-02-05",
+        "close": 393.43
+      },
+      {
+        "date": "2026-02-06",
+        "close": 394.88
+      },
+      {
+        "date": "2026-02-09",
+        "close": 392.16
+      },
+      {
+        "date": "2026-02-10",
+        "close": 389.73
+      },
+      {
+        "date": "2026-02-11",
+        "close": 384.0
+      },
+      {
+        "date": "2026-02-12",
+        "close": 381.78
+      },
+      {
+        "date": "2026-02-13",
+        "close": 375.5
+      },
+      {
+        "date": "2026-02-17",
+        "close": 373.5
+      },
+      {
+        "date": "2026-02-18",
+        "close": 382.99
+      },
+      {
+        "date": "2026-02-19",
+        "close": 385.13
+      },
+      {
+        "date": "2026-02-20",
+        "close": 384.61
+      }
+    ],
+    "PLTR": [
+      {
+        "date": "2026-01-21",
+        "close": 165.33
+      },
+      {
+        "date": "2026-01-22",
+        "close": 165.9
+      },
+      {
+        "date": "2026-01-23",
+        "close": 169.6
+      },
+      {
+        "date": "2026-01-26",
+        "close": 167.47
+      },
+      {
+        "date": "2026-01-27",
+        "close": 165.7
+      },
+      {
+        "date": "2026-01-28",
+        "close": 157.35
+      },
+      {
+        "date": "2026-01-29",
+        "close": 151.86
+      },
+      {
+        "date": "2026-01-30",
+        "close": 146.59
+      },
+      {
+        "date": "2026-02-02",
+        "close": 147.76
+      },
+      {
+        "date": "2026-02-03",
+        "close": 157.88
+      },
+      {
+        "date": "2026-02-04",
+        "close": 139.54
+      },
+      {
+        "date": "2026-02-05",
+        "close": 130.01
+      },
+      {
+        "date": "2026-02-06",
+        "close": 135.9
+      },
+      {
+        "date": "2026-02-09",
+        "close": 142.91
+      },
+      {
+        "date": "2026-02-10",
+        "close": 139.51
+      },
+      {
+        "date": "2026-02-11",
+        "close": 135.68
+      },
+      {
+        "date": "2026-02-12",
+        "close": 129.13
+      },
+      {
+        "date": "2026-02-13",
+        "close": 131.41
+      },
+      {
+        "date": "2026-02-17",
+        "close": 133.02
+      },
+      {
+        "date": "2026-02-18",
+        "close": 135.38
+      },
+      {
+        "date": "2026-02-19",
+        "close": 134.89
+      },
+      {
+        "date": "2026-02-20",
+        "close": 135.24
+      }
+    ],
+    "RDDT": [
+      {
+        "date": "2026-01-21",
+        "close": 210.13
+      },
+      {
+        "date": "2026-01-22",
+        "close": 214.54
+      },
+      {
+        "date": "2026-01-23",
+        "close": 218.88
+      },
+      {
+        "date": "2026-01-26",
+        "close": 213.63
+      },
+      {
+        "date": "2026-01-27",
+        "close": 196.3
+      },
+      {
+        "date": "2026-01-28",
+        "close": 193.14
+      },
+      {
+        "date": "2026-01-29",
+        "close": 190.05
+      },
+      {
+        "date": "2026-01-30",
+        "close": 180.27
+      },
+      {
+        "date": "2026-02-02",
+        "close": 177.15
+      },
+      {
+        "date": "2026-02-03",
+        "close": 165.41
+      },
+      {
+        "date": "2026-02-04",
+        "close": 152.69
+      },
+      {
+        "date": "2026-02-05",
+        "close": 151.05
+      },
+      {
+        "date": "2026-02-06",
+        "close": 139.83
+      },
+      {
+        "date": "2026-02-09",
+        "close": 141.74
+      },
+      {
+        "date": "2026-02-10",
+        "close": 149.98
+      },
+      {
+        "date": "2026-02-11",
+        "close": 139.29
+      },
+      {
+        "date": "2026-02-12",
+        "close": 131.07
+      },
+      {
+        "date": "2026-02-13",
+        "close": 139.65
+      },
+      {
+        "date": "2026-02-17",
+        "close": 139.23
+      },
+      {
+        "date": "2026-02-18",
+        "close": 147.46
+      },
+      {
+        "date": "2026-02-19",
+        "close": 146.13
+      },
+      {
+        "date": "2026-02-20",
+        "close": 150.14
+      }
+    ],
+    "OPEN": [
+      {
+        "date": "2026-01-21",
+        "close": 6.48
+      },
+      {
+        "date": "2026-01-22",
+        "close": 6.42
+      },
+      {
+        "date": "2026-01-23",
+        "close": 6.01
+      },
+      {
+        "date": "2026-01-26",
+        "close": 5.87
+      },
+      {
+        "date": "2026-01-27",
+        "close": 5.81
+      },
+      {
+        "date": "2026-01-28",
+        "close": 5.76
+      },
+      {
+        "date": "2026-01-29",
+        "close": 5.58
+      },
+      {
+        "date": "2026-01-30",
+        "close": 5.15
+      },
+      {
+        "date": "2026-02-02",
+        "close": 4.82
+      },
+      {
+        "date": "2026-02-03",
+        "close": 5.13
+      },
+      {
+        "date": "2026-02-04",
+        "close": 5.0
+      },
+      {
+        "date": "2026-02-05",
+        "close": 4.7
+      },
+      {
+        "date": "2026-02-06",
+        "close": 4.88
+      },
+      {
+        "date": "2026-02-09",
+        "close": 4.94
+      },
+      {
+        "date": "2026-02-10",
+        "close": 4.69
+      },
+      {
+        "date": "2026-02-11",
+        "close": 4.76
+      },
+      {
+        "date": "2026-02-12",
+        "close": 4.38
+      },
+      {
+        "date": "2026-02-13",
+        "close": 4.45
+      },
+      {
+        "date": "2026-02-17",
+        "close": 4.33
+      },
+      {
+        "date": "2026-02-18",
+        "close": 4.63
+      },
+      {
+        "date": "2026-02-19",
+        "close": 4.65
+      },
+      {
+        "date": "2026-02-20",
+        "close": 5.0
+      }
+    ],
+    "COIN": [
+      {
+        "date": "2026-01-21",
+        "close": 226.93
+      },
+      {
+        "date": "2026-01-22",
+        "close": 223.14
+      },
+      {
+        "date": "2026-01-23",
+        "close": 216.95
+      },
+      {
+        "date": "2026-01-26",
+        "close": 213.48
+      },
+      {
+        "date": "2026-01-27",
+        "close": 210.83
+      },
+      {
+        "date": "2026-01-28",
+        "close": 209.43
+      },
+      {
+        "date": "2026-01-29",
+        "close": 199.18
+      },
+      {
+        "date": "2026-01-30",
+        "close": 194.74
+      },
+      {
+        "date": "2026-02-02",
+        "close": 187.86
+      },
+      {
+        "date": "2026-02-03",
+        "close": 179.66
+      },
+      {
+        "date": "2026-02-04",
+        "close": 168.62
+      },
+      {
+        "date": "2026-02-05",
+        "close": 146.12
+      },
+      {
+        "date": "2026-02-06",
+        "close": 165.12
+      },
+      {
+        "date": "2026-02-09",
+        "close": 167.25
+      },
+      {
+        "date": "2026-02-10",
+        "close": 162.51
+      },
+      {
+        "date": "2026-02-11",
+        "close": 153.2
+      },
+      {
+        "date": "2026-02-12",
+        "close": 141.09
+      },
+      {
+        "date": "2026-02-13",
+        "close": 164.32
+      },
+      {
+        "date": "2026-02-17",
+        "close": 166.02
+      },
+      {
+        "date": "2026-02-18",
+        "close": 164.05
+      },
+      {
+        "date": "2026-02-19",
+        "close": 165.94
+      },
+      {
+        "date": "2026-02-20",
+        "close": 171.35
+      }
+    ],
+    "NVDA": [
+      {
+        "date": "2026-01-21",
+        "close": 183.32
+      },
+      {
+        "date": "2026-01-22",
+        "close": 184.84
+      },
+      {
+        "date": "2026-01-23",
+        "close": 187.67
+      },
+      {
+        "date": "2026-01-26",
+        "close": 186.47
+      },
+      {
+        "date": "2026-01-27",
+        "close": 188.52
+      },
+      {
+        "date": "2026-01-28",
+        "close": 191.52
+      },
+      {
+        "date": "2026-01-29",
+        "close": 192.51
+      },
+      {
+        "date": "2026-01-30",
+        "close": 191.13
+      },
+      {
+        "date": "2026-02-02",
+        "close": 185.61
+      },
+      {
+        "date": "2026-02-03",
+        "close": 180.34
+      },
+      {
+        "date": "2026-02-04",
+        "close": 174.19
+      },
+      {
+        "date": "2026-02-05",
+        "close": 171.88
+      },
+      {
+        "date": "2026-02-06",
+        "close": 185.41
+      },
+      {
+        "date": "2026-02-09",
+        "close": 190.04
+      },
+      {
+        "date": "2026-02-10",
+        "close": 188.54
+      },
+      {
+        "date": "2026-02-11",
+        "close": 190.05
+      },
+      {
+        "date": "2026-02-12",
+        "close": 186.94
+      },
+      {
+        "date": "2026-02-13",
+        "close": 182.81
+      },
+      {
+        "date": "2026-02-17",
+        "close": 184.97
+      },
+      {
+        "date": "2026-02-18",
+        "close": 187.98
+      },
+      {
+        "date": "2026-02-19",
+        "close": 187.9
+      },
+      {
+        "date": "2026-02-20",
+        "close": 189.82
+      }
+    ]
+  },
+  "all_ranked": [
+    {
+      "symbol": "DOW",
+      "count": 6,
+      "momentum_score": 85.0,
+      "sentiment": "bullish",
+      "sentiment_score": 1.0,
+      "isin": "US2605571031",
+      "company_name": "Dow Inc.",
+      "company_desc": "Chemiekonzern: Kunststoffe, Beschichtungen, Industriechemikalien.",
+      "sector": "Chemie"
+    },
+    {
+      "symbol": "QQQ",
+      "count": 9,
+      "momentum_score": 82.9,
+      "sentiment": "neutral",
+      "sentiment_score": 0.0,
+      "isin": "US46090E1038",
+      "company_name": "Invesco QQQ Trust",
+      "company_desc": "ETF auf den Nasdaq-100 Index. Top-100 Tech-Aktien der USA.",
+      "sector": "ETF/Tech"
+    },
+    {
+      "symbol": "DPZ",
+      "count": 10,
+      "momentum_score": 81.7,
+      "sentiment": "bullish",
+      "sentiment_score": 0.25,
+      "isin": "US25754A2015",
+      "company_name": "Domino's Pizza",
+      "company_desc": "Weltweit groesste Pizza-Lieferkette mit ueber 20.000 Filialen.",
+      "sector": "Gastronomie"
+    },
+    {
+      "symbol": "PLTR",
+      "count": 11,
+      "momentum_score": 79.0,
+      "sentiment": "neutral",
+      "sentiment_score": 0.2,
+      "isin": "US69608A1088",
+      "company_name": "Palantir Technologies",
+      "company_desc": "Big-Data-Analyse und KI-Software fuer Regierungen und Unternehmen.",
+      "sector": "Tech/KI"
+    },
+    {
+      "symbol": "RDDT",
+      "count": 8,
+      "momentum_score": 79.0,
+      "sentiment": "neutral",
+      "sentiment_score": 0.2,
+      "isin": "US75734B1008",
+      "company_name": "Reddit Inc.",
+      "company_desc": "Social-Media-Plattform mit Forum-Communities (Subreddits). IPO 2024.",
+      "sector": "Tech/Social"
+    },
+    {
+      "symbol": "OPEN",
+      "count": 16,
+      "momentum_score": 78.2,
+      "sentiment": "neutral",
+      "sentiment_score": 0.09,
+      "isin": "US6837121036",
+      "company_name": "Opendoor Technologies",
+      "company_desc": "iBuyer-Plattform: Kauft und verkauft Wohnimmobilien online.",
+      "sector": "Immobilien/Tech"
+    },
+    {
+      "symbol": "COIN",
+      "count": 8,
+      "momentum_score": 77.5,
+      "sentiment": "neutral",
+      "sentiment_score": 0.0,
+      "isin": "US19260Q1076",
+      "company_name": "Coinbase Global",
+      "company_desc": "Groesste US-Kryptoboerse. Handel mit Bitcoin, Ethereum und anderen Kryptos.",
+      "sector": "Krypto/Finanzen"
+    },
+    {
+      "symbol": "NVDA",
+      "count": 8,
+      "momentum_score": 58.9,
+      "sentiment": "neutral",
+      "sentiment_score": -0.11,
+      "isin": "US67066G1040",
+      "company_name": "NVIDIA Corp.",
+      "company_desc": "Marktfuehrer fuer KI-Chips (GPUs). Treiber der KI-Revolution.",
+      "sector": "Halbleiter/KI"
+    }
+  ]
+}

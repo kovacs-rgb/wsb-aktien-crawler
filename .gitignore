@@ -1,0 +1,25 @@
+# Credentials - NIEMALS committen!
+secret.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Pickle-Daten (zu gross fuer Git)
+pickle/
+
+# Lokale Ausgaben
+output/
+dashboard/email_preview.html
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/

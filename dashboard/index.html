@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WSB Aktien-Crawler Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Montserrat',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;overflow-x:hidden}
+
+        /* NAV */
+        nav{position:fixed;top:0;width:100%;z-index:100;padding:1.2rem 3rem;display:flex;justify-content:space-between;align-items:center;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+        .logo{font-size:1.4rem;font-weight:800;letter-spacing:-.5px}
+        .logo span{background:linear-gradient(135deg,#4d65ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .nav-links{display:flex;gap:2rem;list-style:none}
+        .nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.5px;transition:color .3s}
+        .nav-links a:hover{color:#fff}
+        .nav-status{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:rgba(255,255,255,.4)}
+        .status-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+        /* HERO */
+        .hero{padding:8rem 3rem 3rem;text-align:center;position:relative}
+        .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(77,101,255,.12) 0%,transparent 70%);pointer-events:none}
+        .hero h1{font-size:2.8rem;font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:1rem}
+        .hero h1 .gt{background:linear-gradient(135deg,#4d65ff 0%,#a855f7 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero p{color:rgba(255,255,255,.5);font-size:1rem;font-weight:400;max-width:600px;margin:0 auto}
+
+        /* STATS BAR */
+        .stats-bar{display:flex;justify-content:center;gap:3rem;padding:1.5rem 3rem;margin:0 3rem 2rem;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+        .stat-item{text-align:center}
+        .stat-value{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#4d65ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);margin-top:.2rem;font-weight:600}
+
+        /* SECTION */
+        .section{padding:2rem 3rem}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+        .section-title{font-size:1.3rem;font-weight:700;letter-spacing:-.5px}
+        .section-subtitle{font-size:.8rem;color:rgba(255,255,255,.35);font-weight:500}
+
+        /* TOP 5 KACHELN */
+        .top5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
+        .top5-card{position:relative;border-radius:20px;padding:1.6rem;overflow:hidden;cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;min-height:260px;display:flex;flex-direction:column;justify-content:space-between}
+        .top5-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+
+        .top5-card:nth-child(1){background:linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);border:1px solid rgba(77,101,255,.25)}
+        .top5-card:nth-child(1)::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(77,101,255,.15),transparent 50%)}
+        .top5-card:nth-child(2){background:linear-gradient(135deg,#1a1a2e 0%,#1e1b3a 40%,#2d1b69 100%);border:1px solid rgba(168,85,247,.25)}
+        .top5-card:nth-child(2)::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(168,85,247,.15),transparent 50%)}
+        .top5-card:nth-child(3){background:linear-gradient(135deg,#1a1a2e 0%,#1b2e3a 40%,#0e4d64 100%);border:1px solid rgba(6,182,212,.25)}
+        .top5-card:nth-child(3)::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(6,182,212,.15),transparent 50%)}
+        .top5-card:nth-child(4){background:linear-gradient(135deg,#1a1a2e 0%,#2e1b2e 40%,#6b1d5e 100%);border:1px solid rgba(236,72,153,.25)}
+        .top5-card:nth-child(4)::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(236,72,153,.15),transparent 50%)}
+        .top5-card:nth-child(5){background:linear-gradient(135deg,#1a1a2e 0%,#1b2e1e 40%,#1d6b2f 100%);border:1px solid rgba(34,197,94,.25)}
+        .top5-card:nth-child(5)::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(34,197,94,.15),transparent 50%)}
+
+        .card-rank{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.3);position:relative;z-index:1}
+        .card-symbol{font-size:2rem;font-weight:900;letter-spacing:-1px;position:relative;z-index:1;margin-top:.3rem}
+        .card-company{font-size:.7rem;color:rgba(255,255,255,.45);font-weight:500;position:relative;z-index:1;margin-top:.1rem}
+        .card-count{font-size:.8rem;color:rgba(255,255,255,.5);font-weight:500;position:relative;z-index:1}
+
+        /* Hover-Tooltip */
+        .card-tooltip{position:absolute;bottom:0;left:0;right:0;padding:1rem 1.4rem;background:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.85) 60%,transparent 100%);opacity:0;transform:translateY(10px);transition:all .35s ease;z-index:10;pointer-events:none;border-radius:0 0 20px 20px}
+        .top5-card:hover .card-tooltip{opacity:1;transform:translateY(0)}
+        .tooltip-sector{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#a855f7;margin-bottom:.3rem}
+        .tooltip-desc{font-size:.72rem;line-height:1.5;color:rgba(255,255,255,.75);font-weight:400}
+        .tooltip-hint{font-size:.6rem;color:rgba(255,255,255,.3);margin-top:.4rem;font-style:italic}
+
+        /* Momentum Ring */
+        .card-momentum{position:relative;z-index:1;margin-top:.6rem;display:flex;align-items:center;gap:.6rem}
+        .momentum-ring{width:44px;height:44px;position:relative}
+        .momentum-ring svg{transform:rotate(-90deg)}
+        .momentum-ring .ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:4}
+        .momentum-ring .ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+        .momentum-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.7rem;font-weight:800}
+        .momentum-label{font-size:.65rem;color:rgba(255,255,255,.4);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .momentum-label span{display:block;font-size:.85rem;font-weight:700;color:#fff;margin-top:2px}
+
+        /* Sentiment Badge */
+        .card-sentiment{position:relative;z-index:1;margin-top:.5rem}
+        .sentiment-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;font-weight:700;padding:.25rem .6rem;border-radius:6px}
+        .sentiment-bullish{color:#22c55e;background:rgba(34,197,94,.12)}
+        .sentiment-bearish{color:#ef4444;background:rgba(239,68,68,.12)}
+        .sentiment-neutral{color:rgba(255,255,255,.4);background:rgba(255,255,255,.06)}
+
+        /* Flatex Buy Button */
+        .flatex-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;padding:.35rem .7rem;border-radius:8px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#0ea5e9,#2563eb);border:1px solid rgba(37,99,235,.4);transition:all .3s;position:relative;z-index:5;margin-top:.5rem}
+        .flatex-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(37,99,235,.4);background:linear-gradient(135deg,#38bdf8,#3b82f6)}
+        .flatex-btn svg{width:14px;height:14px;fill:none}
+        .flatex-amount{font-size:.75rem;font-weight:800;color:#38bdf8;margin-left:.2rem}
+
+        .card-bottom{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;margin-top:.5rem}
+        .card-trend{font-size:.8rem;font-weight:700;padding:.25rem .6rem;border-radius:8px}
+        .trend-up{color:#22c55e;background:rgba(34,197,94,.12)}
+        .trend-down{color:#ef4444;background:rgba(239,68,68,.12)}
+        .trend-neutral{color:rgba(255,255,255,.4);background:rgba(255,255,255,.06)}
+        .card-sparkline{height:36px;width:70px}
+
+        /* CHART MODAL */
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;animation:fadeIn .25s ease}
+        .modal-overlay.active{display:flex}
+        .modal{background:linear-gradient(135deg,#111118 0%,#1a1a2e 100%);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:2.5rem;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;position:relative;animation:slideUp .3s ease}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .modal-close{position:absolute;top:1rem;right:1.2rem;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.5);font-size:1.2rem;cursor:pointer;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+        .modal-close:hover{background:rgba(255,255,255,.15);color:#fff}
+        .modal-header{margin-bottom:1.5rem}
+        .modal-symbol{font-size:2.2rem;font-weight:900;letter-spacing:-1px}
+        .modal-company{font-size:.85rem;color:rgba(255,255,255,.5);font-weight:500;margin-top:.2rem}
+        .modal-sector{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#a855f7;background:rgba(168,85,247,.12);padding:.2rem .6rem;border-radius:5px;margin-top:.4rem}
+        .modal-desc{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.6;margin-top:.8rem;padding:.8rem;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05)}
+        .modal-chart{margin-top:1.5rem}
+        .modal-chart-title{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);font-weight:600;margin-bottom:.8rem}
+        .modal-chart svg{width:100%;height:200px}
+        .modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem}
+        .modal-stat{text-align:center;padding:.8rem;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid rgba(255,255,255,.05)}
+        .modal-stat-value{font-size:1.3rem;font-weight:800}
+        .modal-stat-label{font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.35);margin-top:.2rem;font-weight:600}
+
+        /* BUDGET SECTION */
+        .budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+        .budget-card{border-radius:16px;padding:1.8rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+        .budget-total{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#4d65ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .budget-input-row{display:flex;align-items:center;gap:.8rem;margin-top:.6rem}
+        .budget-slider{-webkit-appearance:none;appearance:none;flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.1);outline:none;cursor:pointer}
+        .budget-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4d65ff,#a855f7);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+        .budget-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4d65ff,#a855f7);cursor:pointer;border:2px solid rgba(255,255,255,.2)}
+        .budget-input{width:80px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;padding:.4rem .6rem;text-align:center;outline:none;transition:border-color .2s}
+        .budget-input:focus{border-color:rgba(77,101,255,.5)}
+        .budget-input-suffix{font-size:.8rem;color:rgba(255,255,255,.4);font-weight:600}
+        .budget-bar-container{margin-top:1rem}
+        .budget-bar-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}
+        .budget-bar-label{font-size:.8rem;font-weight:700;width:60px;text-align:right}
+        .budget-bar-wrap{flex:1;height:28px;background:rgba(255,255,255,.05);border-radius:8px;overflow:hidden;position:relative}
+        .budget-bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;padding-left:.6rem;font-size:.7rem;font-weight:700;transition:width .8s ease}
+        .budget-bar-amount{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.5);width:70px;text-align:right}
+        .budget-buy-btn{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:700;padding:.25rem .55rem;border-radius:6px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#0ea5e9,#2563eb);border:1px solid rgba(37,99,235,.3);transition:all .3s;margin-left:.5rem;white-space:nowrap}
+        .budget-buy-btn:hover{box-shadow:0 3px 12px rgba(37,99,235,.35);background:linear-gradient(135deg,#38bdf8,#3b82f6)}
+        .budget-buy-btn svg{width:12px;height:12px;fill:none}
+
+        .budget-colors-1{background:linear-gradient(90deg,#4d65ff,#6b7fff)}
+        .budget-colors-2{background:linear-gradient(90deg,#a855f7,#c084fc)}
+        .budget-colors-3{background:linear-gradient(90deg,#06b6d4,#22d3ee)}
+        .budget-colors-4{background:linear-gradient(90deg,#ec4899,#f472b6)}
+        .budget-colors-5{background:linear-gradient(90deg,#22c55e,#4ade80)}
+
+        /* Haltedauer */
+        .hold-info{margin-top:1.2rem}
+        .hold-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+        .hold-symbol{font-weight:700;font-size:.9rem}
+        .hold-duration{font-size:.8rem;color:rgba(255,255,255,.5)}
+        .hold-tag{font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:5px}
+        .hold-short{color:#f59e0b;background:rgba(245,158,11,.12)}
+        .hold-medium{color:#06b6d4;background:rgba(6,182,212,.12)}
+        .hold-long{color:#22c55e;background:rgba(34,197,94,.12)}
+
+        /* RANKING TABLE */
+        .table-container{border-radius:16px;overflow:hidden;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06)}
+        .data-table{width:100%;border-collapse:collapse}
+        .data-table thead th{padding:.8rem 1rem;text-align:left;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);font-weight:600;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0}
+        .data-table tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .2s}
+        .data-table tbody tr:hover{background:rgba(255,255,255,.03)}
+        .data-table td{padding:.7rem 1rem;font-size:.8rem}
+
+        .heat-cell{border-radius:6px;padding:.25rem .5rem;text-align:center;font-weight:600;font-size:.75rem;min-width:40px;display:inline-block}
+
+        /* ALL SYMBOLS */
+        .all-symbols-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.7rem}
+        .symbol-mini-card{border-radius:10px;padding:.8rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);text-align:center;transition:transform .3s,border-color .3s}
+        .symbol-mini-card:hover{transform:translateY(-3px);border-color:rgba(77,101,255,.3)}
+        .mini-symbol{font-size:.9rem;font-weight:800}
+        .mini-count{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:.2rem}
+
+        /* DISCLAIMER */
+        .disclaimer{margin:2rem 3rem;padding:1rem 1.2rem;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);font-size:.7rem;color:rgba(255,255,255,.4);line-height:1.6}
+        .disclaimer strong{color:rgba(239,68,68,.7)}
+
+        footer{padding:2rem;text-align:center;color:rgba(255,255,255,.2);font-size:.7rem;border-top:1px solid rgba(255,255,255,.04);margin-top:2rem}
+
+        .loading{display:flex;align-items:center;justify-content:center;min-height:150px;color:rgba(255,255,255,.3);font-size:.85rem}
+        .loading::after{content:'';width:18px;height:18px;border:2px solid rgba(77,101,255,.3);border-top-color:#4d65ff;border-radius:50%;animation:spin .8s linear infinite;margin-left:.6rem}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        @media(max-width:1100px){.top5-grid{grid-template-columns:repeat(3,1fr)}.budget-grid{grid-template-columns:1fr}}
+        @media(max-width:700px){.top5-grid{grid-template-columns:1fr}.nav-links{display:none}.section{padding:1.5rem}.stats-bar{flex-wrap:wrap;gap:1rem;margin:0 1rem 1rem}}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">WSB<span>Crawler</span></div>
+        <ul class="nav-links">
+            <li><a href="#top5">Top 5</a></li>
+            <li><a href="#budget">Budget</a></li>
+            <li><a href="#ranking">Ranking</a></li>
+            <li><a href="#verlauf">Verlauf</a></li>
+        </ul>
+        <div class="nav-status"><div class="status-dot"></div><span id="nav-status-text">Lade...</span></div>
+    </nav>
+
+    <section class="hero">
+        <h1><span class="gt">r/wallstreetbets</span><br>Aktien-Crawler</h1>
+        <p>Meistdiskutierte Aktien auf Reddit. Momentum-Score, Sentiment-Analyse und Budget-Verteilung.</p>
+    </section>
+
+    <div class="stats-bar">
+        <div class="stat-item"><div class="stat-value" id="stat-symbols">--</div><div class="stat-label">Symbole</div></div>
+        <div class="stat-item"><div class="stat-value" id="stat-runs">--</div><div class="stat-label">Suchlaeufe</div></div>
+        <div class="stat-item"><div class="stat-value" id="stat-posts">--</div><div class="stat-label">Posts</div></div>
+        <div class="stat-item"><div class="stat-value" id="stat-updated">--</div><div class="stat-label">Update</div></div>
+    </div>
+
+    <!-- TOP 5 -->
+    <section class="section" id="top5">
+        <div class="section-header"><div>
+            <div class="section-title">Top 5 - Momentum Ranking</div>
+            <div class="section-subtitle">Sortiert nach Momentum-Score &mdash; Hover fuer Unternehmensbeschreibung, Klick fuer Chart</div>
+        </div></div>
+        <div class="top5-grid" id="top5-grid"><div class="loading">Lade...</div></div>
+    </section>
+
+    <!-- BUDGET -->
+    <section class="section" id="budget">
+        <div class="section-header"><div>
+            <div class="section-title">Budget-Verteilung & Haltedauer</div>
+            <div class="section-subtitle" id="budget-subtitle">Gewichtet nach Momentum-Score</div>
+        </div></div>
+        <div class="budget-grid" id="budget-grid"><div class="loading">Lade...</div></div>
+    </section>
+
+    <!-- RANKING TABLE -->
+    <section class="section" id="ranking">
+        <div class="section-header"><div>
+            <div class="section-title">Komplettes Ranking</div>
+            <div class="section-subtitle">Alle Symbole nach Score sortiert</div>
+        </div></div>
+        <div class="table-container" id="ranking-table"><div class="loading">Lade...</div></div>
+    </section>
+
+    <!-- VERLAUF -->
+    <section class="section" id="verlauf">
+        <div class="section-header"><div>
+            <div class="section-title">Verlauf</div>
+            <div class="section-subtitle">Heatmap aller Suchlaeufe</div>
+        </div></div>
+        <div class="table-container" id="history-table"><div class="loading">Lade...</div></div>
+    </section>
+
+    <!-- ALLE SYMBOLE -->
+    <section class="section" id="alle">
+        <div class="section-header"><div>
+            <div class="section-title">Alle Symbole</div>
+            <div class="section-subtitle" id="all-symbols-count">--</div>
+        </div></div>
+        <div class="all-symbols-grid" id="all-symbols-grid"><div class="loading">Lade...</div></div>
+    </section>
+
+    <div class="disclaimer">
+        <strong>Hinweis:</strong> Dieses Tool dient ausschliesslich zu Informationszwecken und stellt keine Anlageberatung dar.
+        Die Scores basieren auf Reddit-Erwaechnungen und Sentiment-Keywords. Eigene Recherche ist unbedingt erforderlich.
+        Investitionen bergen Risiken bis hin zum Totalverlust. Vergangene Popularitaet ist kein Indikator fuer kuenftige Kursentwicklung.
+    </div>
+
+    <footer>WSB Aktien-Crawler Dashboard &mdash; Daten von r/wallstreetbets</footer>
+
+    <!-- CHART MODAL -->
+    <div class="modal-overlay" id="chart-modal">
+        <div class="modal" id="modal-content"></div>
+    </div>
+
+    <script>
+    const sparkColors = ['#4d65ff','#a855f7','#06b6d4','#ec4899','#22c55e'];
+    const cartIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>`;
+
+    // Globaler State
+    let dashData = null;
+    let currentBudget = 200;
+
+    function sparkline(history, color) {
+        if (!history || history.length < 2) return '';
+        const v = history.map(h => h.count);
+        const mx = Math.max(...v), mn = Math.min(...v), rng = mx - mn || 1;
+        const w = 70, h = 36, step = w / (v.length - 1);
+        const pts = v.map((val, i) => `${i*step},${h-((val-mn)/rng)*(h-4)-2}`).join(' ');
+        return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+            <polyline fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}" opacity=".6"/>
+            <circle cx="${(v.length-1)*step}" cy="${h-((v[v.length-1]-mn)/rng)*(h-4)-2}" r="3" fill="${color}"/>
+        </svg>`;
+    }
+
+    function priceChart(prices, color, w, h) {
+        if (!prices || prices.length < 2) return `<svg width="${w}" height="${h}"><text x="${w/2}" y="${h/2}" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="14" font-family="Montserrat">Keine Kursdaten</text></svg>`;
+        const v = prices.map(p => p.close);
+        const labels = prices.map(p => p.date.slice(5)); // MM-DD
+        const mx = Math.max(...v), mn = Math.min(...v), rng = mx - mn || 1;
+        const padL = 55, padR = 15, padT = 20, padB = 30;
+        const pw = w - padL - padR, ph = h - padT - padB;
+        const step = pw / (v.length - 1);
+        const pts = v.map((val, i) => [padL + i * step, padT + ph - ((val - mn) / rng) * ph]);
+        const pctChange = ((v[v.length-1] - v[0]) / v[0] * 100).toFixed(1);
+        const pctColor = pctChange >= 0 ? '#22c55e' : '#ef4444';
+
+        let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`;
+        // Grid + Y-Achse (Kurs)
+        for (let i = 0; i <= 4; i++) {
+            const y = padT + (ph / 4) * i;
+            const val = (mx - (i / 4) * rng).toFixed(v[0] > 50 ? 0 : 2);
+            svg += `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="rgba(255,255,255,.06)"/>`;
+            svg += `<text x="${padL-6}" y="${y+4}" text-anchor="end" fill="rgba(255,255,255,.3)" font-size="9" font-family="Montserrat">$${val}</text>`;
+        }
+        // X-Achse Labels
+        pts.forEach((p, i) => {
+            if (i % Math.max(1, Math.ceil(prices.length / 7)) === 0 || i === prices.length - 1) {
+                svg += `<text x="${p[0]}" y="${h-6}" text-anchor="middle" fill="rgba(255,255,255,.2)" font-size="8" font-family="Montserrat">${labels[i]}</text>`;
+            }
+        });
+        // Area fill
+        const areaPath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
+        const uid = 'pg' + Math.random().toString(36).slice(2,8);
+        svg += `<defs><linearGradient id="${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".2"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>`;
+        svg += `<path d="${areaPath} L${pts[pts.length-1][0]},${padT+ph} L${pts[0][0]},${padT+ph} Z" fill="url(#${uid})"/>`;
+        // Line
+        svg += `<polyline fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.map(p => p.join(',')).join(' ')}"/>`;
+        // Last point + price label
+        const last = pts[pts.length-1];
+        svg += `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${color}"/>`;
+        svg += `<text x="${last[0]}" y="${last[1]-10}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800" font-family="Montserrat">$${v[v.length-1]}</text>`;
+        // Performance badge
+        svg += `<text x="${w-padR}" y="${padT-4}" text-anchor="end" fill="${pctColor}" font-size="11" font-weight="800" font-family="Montserrat">${pctChange >= 0 ? '+' : ''}${pctChange}%</text>`;
+        svg += '</svg>';
+        return svg;
+    }
+
+    function mentionsChart(history, color, w, h) {
+        if (!history || history.length < 2) return '';
+        const v = history.map(x => x.count);
+        const labels = history.map(x => x.run);
+        const mx = Math.max(...v), mn = 0, rng = mx || 1;
+        const padL = 30, padR = 15, padT = 20, padB = 30;
+        const pw = w - padL - padR, ph = h - padT - padB;
+        const barW = Math.min(40, (pw / v.length) * 0.7);
+        const gap = pw / v.length;
+
+        let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`;
+        // Y grid
+        for (let i = 0; i <= 3; i++) {
+            const y = padT + (ph / 3) * i;
+            const val = Math.round(mx - (i / 3) * mx);
+            svg += `<line x1="${padL}" y1="${y}" x2="${w-padR}" y2="${y}" stroke="rgba(255,255,255,.06)"/>`;
+            svg += `<text x="${padL-4}" y="${y+4}" text-anchor="end" fill="rgba(255,255,255,.3)" font-size="9" font-family="Montserrat">${val}</text>`;
+        }
+        // Bars
+        const uid2 = 'bg' + Math.random().toString(36).slice(2,8);
+        svg += `<defs><linearGradient id="${uid2}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity=".8"/><stop offset="100%" stop-color="${color}" stop-opacity=".3"/></linearGradient></defs>`;
+        v.forEach((val, i) => {
+            const x = padL + i * gap + (gap - barW) / 2;
+            const barH = (val / rng) * ph;
+            const y = padT + ph - barH;
+            svg += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="3" fill="url(#${uid2})"/>`;
+            svg += `<text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" fill="${color}" font-size="9" font-weight="700" font-family="Montserrat">${val}</text>`;
+            svg += `<text x="${x + barW/2}" y="${h-6}" text-anchor="middle" fill="rgba(255,255,255,.2)" font-size="7" font-family="Montserrat">${labels[i]}</text>`;
+        });
+        svg += '</svg>';
+        return svg;
+    }
+
+    function momentumRing(score, color) {
+        const r = 18, circ = 2 * Math.PI * r;
+        const offset = circ - (score / 100) * circ;
+        return `<div class="momentum-ring">
+            <svg width="44" height="44" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="${r}" class="ring-bg"/>
+                <circle cx="22" cy="22" r="${r}" class="ring-fill" stroke="${color}"
+                    stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="momentum-value">${Math.round(score)}</div>
+        </div>`;
+    }
+
+    function sentimentBadge(sentiment) {
+        if (!sentiment) return '';
+        const cls = sentiment.label === 'bullish' ? 'sentiment-bullish' :
+                    sentiment.label === 'bearish' ? 'sentiment-bearish' : 'sentiment-neutral';
+        const arrow = sentiment.label === 'bullish' ? '&#9650;' :
+                      sentiment.label === 'bearish' ? '&#9660;' : '&#9644;';
+        return `<span class="sentiment-badge ${cls}">${arrow} ${sentiment.label} (${sentiment.score > 0 ? '+' : ''}${sentiment.score})</span>`;
+    }
+
+    function holdDuration(momentum) {
+        if (momentum >= 70) return { text: '3-6 Monate', cls: 'hold-long', tag: 'Langfristig' };
+        if (momentum >= 50) return { text: '1-3 Monate', cls: 'hold-medium', tag: 'Mittelfristig' };
+        return { text: '1-4 Wochen', cls: 'hold-short', tag: 'Kurzfristig' };
+    }
+
+    function heatColor(val, mx) {
+        if (!val) return 'rgba(255,255,255,.04)';
+        const r = val / mx;
+        if (r > .7) return 'rgba(34,197,94,.25)';
+        if (r > .4) return 'rgba(255,235,132,.2)';
+        return 'rgba(248,105,107,.15)';
+    }
+
+    // Chart Modal
+    function openChartModal(item, colorIdx) {
+        const modal = document.getElementById('chart-modal');
+        const content = document.getElementById('modal-content');
+        const color = sparkColors[colorIdx % sparkColors.length];
+        const hd = holdDuration(item.momentum_score);
+        const sentLabel = item.sentiment ? sentimentBadge(item.sentiment) : '';
+        const prices = item.prices || (dashData.stock_prices ? dashData.stock_prices[item.symbol] : null) || [];
+        const lastPrice = prices.length ? prices[prices.length - 1].close : null;
+        const firstPrice = prices.length ? prices[0].close : null;
+
+        content.innerHTML = `
+            <button class="modal-close" onclick="closeChartModal()">&times;</button>
+            <div class="modal-header">
+                <div style="display:flex;align-items:baseline;gap:1rem">
+                    <div class="modal-symbol">${item.symbol}</div>
+                    ${lastPrice ? `<div style="font-size:1.4rem;font-weight:800;color:${lastPrice >= firstPrice ? '#22c55e' : '#ef4444'}">$${lastPrice}</div>` : ''}
+                </div>
+                <div class="modal-company">${item.company_name || item.symbol}</div>
+                ${item.sector ? `<div class="modal-sector">${item.sector}</div>` : ''}
+                ${item.company_desc ? `<div class="modal-desc">${item.company_desc}</div>` : ''}
+            </div>
+            <div class="modal-chart">
+                <div class="modal-chart-title" style="display:flex;align-items:center;gap:.5rem">
+                    <span style="width:10px;height:3px;background:${color};border-radius:2px;display:inline-block"></span> Kursentwicklung (30 Tage)
+                </div>
+                ${priceChart(prices, color, 620, 180)}
+            </div>
+            <div class="modal-chart" style="margin-top:1rem">
+                <div class="modal-chart-title" style="display:flex;align-items:center;gap:.5rem">
+                    <span style="width:10px;height:10px;background:${color};border-radius:2px;display:inline-block;opacity:.6"></span> Reddit-Erwaechnungen pro Run
+                </div>
+                ${mentionsChart(item.history, color, 620, 140)}
+            </div>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <div class="modal-stat-value" style="color:${color}">${item.momentum_score}</div>
+                    <div class="modal-stat-label">Momentum Score</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-value">${item.count}</div>
+                    <div class="modal-stat-label">Erwaechnungen</div>
+                </div>
+                <div class="modal-stat">
+                    <div class="modal-stat-value"><span class="hold-tag ${hd.cls}">${hd.tag}</span></div>
+                    <div class="modal-stat-label">Haltedauer: ${hd.text}</div>
+                </div>
+            </div>
+            <div style="margin-top:1rem;display:flex;align-items:center;gap:1rem">
+                <div>${sentLabel}</div>
+                <div style="font-size:.75rem;color:rgba(255,255,255,.35)">Trend: ${item.trend_pct > 0 ? '+' : ''}${item.trend_pct}%</div>
+            </div>`;
+        modal.classList.add('active');
+    }
+
+    function closeChartModal() {
+        document.getElementById('chart-modal').classList.remove('active');
+    }
+
+    document.getElementById('chart-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeChartModal();
+    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeChartModal(); });
+
+    async function loadDashboard() {
+        try {
+            const resp = await fetch('data.json');
+            if (!resp.ok) throw new Error('data.json nicht gefunden');
+            dashData = await resp.json();
+            currentBudget = dashData.budget?.monthly_eur || 200;
+            render(dashData);
+        } catch (e) {
+            document.getElementById('nav-status-text').textContent = 'Keine Daten';
+            document.getElementById('top5-grid').innerHTML = '<div class="loading" style="grid-column:1/-1">Bitte 08_dashboard_data.py ausfuehren</div>';
+        }
+    }
+
+    function render(data) {
+        document.getElementById('nav-status-text').textContent = data.latest_run ? `Run ${data.latest_run}` : 'Keine Daten';
+        document.getElementById('stat-symbols').textContent = Object.keys(data.all_symbols || {}).length;
+        document.getElementById('stat-runs').textContent = data.total_runs || 0;
+        document.getElementById('stat-posts').textContent = (data.runs || []).reduce((s, r) => s + (r.total_posts || 0), 0);
+        document.getElementById('stat-updated').textContent = data.generated || '--';
+
+        renderTop5(data.top5 || [], data.budget || {});
+        renderBudget(data.budget || {}, data.top5 || []);
+        renderRanking(data.all_ranked || []);
+        renderHistory(data.runs || [], data.all_symbols || {});
+        renderAllSymbols(data.all_symbols || {});
+    }
+
+    function renderTop5(top5, budget) {
+        const grid = document.getElementById('top5-grid');
+        if (!top5.length) { grid.innerHTML = '<div class="loading" style="grid-column:1/-1">Keine Daten</div>'; return; }
+
+        const alloc = budget.allocation || [];
+        const allocMap = {};
+        alloc.forEach(a => { allocMap[a.symbol] = a; });
+
+        grid.innerHTML = top5.map((item, i) => {
+            const tc = item.trend_pct > 0 ? 'trend-up' : item.trend_pct < 0 ? 'trend-down' : 'trend-neutral';
+            const ts = item.trend_pct > 0 ? '+' : '';
+            const al = allocMap[item.symbol];
+            const budgetAmount = al ? (al.weight_pct / 100 * currentBudget) : 0;
+            const buyUrl = al ? (al.flatex_url || (al.isin ? `https://www.flatex.de/suche?q=${al.isin}` : '')) : '';
+            let flatexHtml = '';
+            if (buyUrl && budgetAmount > 0) {
+                flatexHtml = `<a href="${buyUrl}" target="_blank" class="flatex-btn" onclick="event.stopPropagation()" title="Bei Flatex kaufen fuer ${budgetAmount.toFixed(0)} EUR">${cartIcon} Kaufen <span class="flatex-amount">${budgetAmount.toFixed(0)}&nbsp;EUR</span></a>`;
+            }
+            const companyName = item.company_name || '';
+            const companyDesc = item.company_desc || '';
+            const sector = item.sector || '';
+
+            return `<div class="top5-card" onclick="openChartModal(dashData.top5[${i}], ${i})">
+                <div>
+                    <div class="card-rank">#${i+1} Momentum</div>
+                    <div class="card-symbol">${item.symbol}</div>
+                    ${companyName ? `<div class="card-company">${companyName}</div>` : ''}
+                    <div class="card-count">${item.count} Erwaechnungen</div>
+                    <div class="card-momentum">
+                        ${momentumRing(item.momentum_score, sparkColors[i])}
+                        <div class="momentum-label">Score<span>${item.momentum_score}</span></div>
+                    </div>
+                    <div class="card-sentiment">${sentimentBadge(item.sentiment)}</div>
+                    ${flatexHtml}
+                </div>
+                <div class="card-bottom">
+                    <span class="card-trend ${tc}">${ts}${item.trend_pct}%</span>
+                    <div class="card-sparkline">${sparkline(item.history, sparkColors[i])}</div>
+                </div>
+                ${companyDesc ? `<div class="card-tooltip"><div class="tooltip-sector">${sector}</div><div class="tooltip-desc">${companyDesc}</div><div class="tooltip-hint">Klick fuer Chart &amp; Details</div></div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    function recalcBudget(newBudget) {
+        currentBudget = newBudget;
+        if (!dashData) return;
+        renderTop5(dashData.top5 || [], dashData.budget || {});
+        renderBudgetBars(dashData.budget || {});
+    }
+
+    function renderBudget(budget, top5) {
+        const container = document.getElementById('budget-grid');
+        const alloc = budget.allocation || [];
+
+        if (!alloc.length) { container.innerHTML = '<div class="loading" style="grid-column:1/-1">Keine Budget-Daten</div>'; return; }
+
+        let holdHtml = top5.map(item => {
+            const h = holdDuration(item.momentum_score);
+            return `<div class="hold-row">
+                <div class="hold-symbol">${item.symbol}</div>
+                <div><span class="hold-tag ${h.cls}">${h.tag}</span></div>
+                <div class="hold-duration">${h.text}</div>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="budget-card">
+                <div class="stat-label">Monatliches Budget</div>
+                <div class="budget-total" id="budget-display">${currentBudget} EUR</div>
+                <div class="budget-input-row">
+                    <input type="range" class="budget-slider" id="budget-slider" min="50" max="2000" step="10" value="${currentBudget}">
+                    <input type="number" class="budget-input" id="budget-number" min="50" max="10000" step="10" value="${currentBudget}">
+                    <span class="budget-input-suffix">EUR</span>
+                </div>
+                <div class="budget-bar-container" id="budget-bars"></div>
+            </div>
+            <div class="budget-card">
+                <div class="stat-label">Empfohlene Haltedauer</div>
+                <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:.3rem">Basierend auf Momentum-Score</div>
+                <div class="hold-info">${holdHtml}</div>
+            </div>`;
+
+        // Events fuer Budget-Anpassung
+        const slider = document.getElementById('budget-slider');
+        const numInput = document.getElementById('budget-number');
+        slider.addEventListener('input', function() {
+            numInput.value = this.value;
+            document.getElementById('budget-display').textContent = this.value + ' EUR';
+            recalcBudget(parseFloat(this.value));
+        });
+        numInput.addEventListener('input', function() {
+            const val = Math.max(50, Math.min(10000, parseFloat(this.value) || 50));
+            slider.value = Math.min(val, 2000);
+            document.getElementById('budget-display').textContent = val + ' EUR';
+            recalcBudget(val);
+        });
+
+        renderBudgetBars(budget);
+    }
+
+    function renderBudgetBars(budget) {
+        const container = document.getElementById('budget-bars');
+        if (!container) return;
+        const alloc = budget.allocation || [];
+        const maxPct = Math.max(...alloc.map(a => a.weight_pct));
+
+        container.innerHTML = alloc.map((a, i) => {
+            const w = (a.weight_pct / maxPct) * 100;
+            const amount = (a.weight_pct / 100 * currentBudget).toFixed(0);
+            const buyUrl = a.flatex_url || (a.isin ? `https://www.flatex.de/suche?q=${a.isin}` : '');
+            const buyBtn = buyUrl ? `<a href="${buyUrl}" target="_blank" class="budget-buy-btn">${cartIcon} ${amount} EUR</a>` : '';
+            return `<div class="budget-bar-row">
+                <div class="budget-bar-label">${a.symbol}</div>
+                <div class="budget-bar-wrap">
+                    <div class="budget-bar-fill budget-colors-${i+1}" style="width:${w}%">${a.weight_pct}%</div>
+                </div>
+                <div class="budget-bar-amount">${amount} EUR${buyBtn}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderRanking(ranked) {
+        const container = document.getElementById('ranking-table');
+        if (!ranked.length) { container.innerHTML = '<div class="loading">Keine Daten</div>'; return; }
+
+        let html = `<table class="data-table"><thead><tr>
+            <th>#</th><th>Symbol</th><th>Unternehmen</th><th>Score</th><th>Erwaechnungen</th><th>Sentiment</th><th>Signal</th><th>Flatex</th>
+        </tr></thead><tbody>`;
+
+        ranked.forEach((s, i) => {
+            const sc = s.sentiment === 'bullish' ? 'sentiment-bullish' :
+                       s.sentiment === 'bearish' ? 'sentiment-bearish' : 'sentiment-neutral';
+            const scoreColor = s.momentum_score >= 70 ? '#22c55e' : s.momentum_score >= 50 ? '#f59e0b' : 'rgba(255,255,255,.4)';
+            const signal = s.momentum_score >= 70 ? '<span style="color:#22c55e;font-weight:700">Stark</span>' :
+                           s.momentum_score >= 50 ? '<span style="color:#f59e0b;font-weight:700">Moderat</span>' :
+                           '<span style="color:rgba(255,255,255,.3)">Schwach</span>';
+            const flatexLink = s.isin ? `<a href="https://www.flatex.de/suche?q=${s.isin}" target="_blank" class="budget-buy-btn">${cartIcon} Flatex</a>` : '<span style="color:rgba(255,255,255,.15)">--</span>';
+            const companyName = s.company_name || '';
+
+            html += `<tr>
+                <td style="color:rgba(255,255,255,.3)">${i+1}</td>
+                <td style="font-weight:800">${s.symbol}</td>
+                <td style="font-size:.7rem;color:rgba(255,255,255,.45)">${companyName}</td>
+                <td style="font-weight:800;color:${scoreColor}">${s.momentum_score}</td>
+                <td>${s.count}</td>
+                <td><span class="sentiment-badge ${sc}">${s.sentiment} (${s.sentiment_score > 0 ? '+' : ''}${s.sentiment_score})</span></td>
+                <td>${signal}</td>
+                <td>${flatexLink}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function renderHistory(runs, allSymbols) {
+        const container = document.getElementById('history-table');
+        if (!runs.length) { container.innerHTML = '<div class="loading">Keine Daten</div>'; return; }
+
+        const symbols = Object.keys(allSymbols).sort();
+        const mx = Math.max(...runs.flatMap(r => Object.values(r.results)));
+
+        let html = '<table class="data-table"><thead><tr><th>Run</th><th>Posts</th>';
+        symbols.forEach(s => html += `<th>${s}</th>`);
+        html += '</tr></thead><tbody>';
+
+        [...runs].reverse().forEach(run => {
+            html += `<tr><td style="font-weight:600;font-variant-numeric:tabular-nums">${run.id}</td>`;
+            html += `<td style="color:rgba(255,255,255,.4)">${run.total_posts}</td>`;
+            symbols.forEach(s => {
+                const v = run.results[s] || 0;
+                html += `<td><span class="heat-cell" style="background:${heatColor(v,mx)}">${v||''}</span></td>`;
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function renderAllSymbols(allSymbols) {
+        const grid = document.getElementById('all-symbols-grid');
+        const symbols = Object.keys(allSymbols);
+        document.getElementById('all-symbols-count').textContent = `${symbols.length} Symbole in allen Durchlaeufen`;
+
+        if (!symbols.length) { grid.innerHTML = ''; return; }
+
+        const totals = symbols.map(s => ({
+            symbol: s,
+            total: allSymbols[s].reduce((sum, h) => sum + h.count, 0)
+        })).sort((a, b) => b.total - a.total);
+
+        grid.innerHTML = totals.map(({symbol, total}) =>
+            `<div class="symbol-mini-card"><div class="mini-symbol">${symbol}</div><div class="mini-count">${total} ges.</div></div>`
+        ).join('');
+    }
+
+    loadDashboard();
+    </script>
+</body>
+</html>
