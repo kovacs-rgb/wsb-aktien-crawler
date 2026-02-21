@@ -1,7 +1,11 @@
 """
-04 - Reddit-Crawler fuer r/wallstreetbets
-Durchsucht neue Posts und Kommentare nach Tickersymbolen aus der Pickle-Liste.
-Speichert Ergebnisse als Pickle-Datei mit eindeutiger Run-ID.
+04 - Reddit-Crawler fuer Aktien-Analyse
+Durchsucht mehrere Subreddits nach Tickersymbolen in drei Kategorien:
+  - WSB Top-5:     r/wallstreetbets (Momentum-Analyse)
+  - Meme-Aktien:   Short-Squeeze & Pennystock Communities
+  - Multi-Bagger:  Wachstumsaktien & 100x-Potenzial Communities
+
+Speichert Ergebnisse als Pickle-Dateien mit eindeutiger Run-ID pro Kategorie.
 Speichert zusaetzlich Kontext-Snippets pro Symbol fuer Sentiment-Analyse.
 
 Unterstuetzt zwei Modi:
@@ -43,6 +47,48 @@ SNIPPET_CHARS = 300
 # Max Snippets pro Symbol
 MAX_SNIPPETS = 20
 
+# ============================================================
+# KATEGORIEN-KONFIGURATION
+# ============================================================
+
+CATEGORIES = {
+    "wsb": {
+        "label": "WSB Top-5",
+        "subreddits": ["wallstreetbets"],
+        "posts_per_sub": 100,
+        "pickle_suffix": "wsb",
+        "min_mentions": 5,
+    },
+    "meme": {
+        "label": "Meme-Aktien",
+        "subreddits": [
+            "wallstreetbets",
+            "Shortsqueeze",
+            "pennystocks",
+            "SqueezePlays",
+            "SmallStreetBets",
+            "MemeStockMarket",
+        ],
+        "posts_per_sub": 50,
+        "pickle_suffix": "meme",
+        "min_mentions": 3,
+    },
+    "multibagger": {
+        "label": "Multi-Bagger",
+        "subreddits": [
+            "wallstreetbets",
+            "stocks",
+            "investing",
+            "GrowthStocks",
+            "tenbagger",
+            "smallstreetbets",
+        ],
+        "posts_per_sub": 50,
+        "pickle_suffix": "multibagger",
+        "min_mentions": 3,
+    },
+}
+
 
 def has_api_credentials():
     if not os.path.exists(ENV_FILE):
@@ -62,7 +108,6 @@ def extract_snippet(text, symbol, chars=SNIPPET_CHARS):
     start = max(0, match.start() - chars // 2)
     end = min(len(text), match.end() + chars // 2)
     snippet = text[start:end].strip()
-    # Zeilenumbrueche normalisieren
     snippet = re.sub(r"\s+", " ", snippet)
     return snippet
 
@@ -81,6 +126,8 @@ def fetch_json(url, max_retries=3):
                 print(f"    Rate-Limit erreicht, warte {wait}s...")
                 time.sleep(wait)
                 continue
+            if resp.status_code == 403:
+                return None  # Quarantaeniert oder gesperrt
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -158,64 +205,79 @@ def fetch_comments_web(permalink, limit=200):
     return comments
 
 
-def crawl_web_scraping(symbols):
+def crawl_web_scraping(symbols, subreddits=None, posts_per_sub=100):
+    """Crawlt mehrere Subreddits und aggregiert Ergebnisse."""
+    if subreddits is None:
+        subreddits = ["wallstreetbets"]
+
     print("Modus: Web-Scraping (kein API-Key noetig)\n")
 
     cutoff_time = (datetime.now(timezone.utc) - timedelta(days=1)).timestamp()
     symbol_counts = Counter()
     symbol_snippets = defaultdict(list)
+    total_post_count = 0
 
-    print("Lade Posts von r/wallstreetbets...")
-    posts = fetch_posts_web(limit=100)
-    print(f"{len(posts)} Posts geladen.\n")
+    for subreddit in subreddits:
+        print(f"\n--- r/{subreddit} ---")
+        posts = fetch_posts_web(subreddit=subreddit, limit=posts_per_sub)
 
-    post_count = 0
-    for post in posts:
-        if post["created_utc"] < cutoff_time:
+        if not posts:
+            print(f"  WARNUNG: r/{subreddit} nicht erreichbar (moeglicherweise quarantaenisiert)")
             continue
 
-        post_count += 1
-        print(f"Post {post_count}: {post['title'][:60]}...")
+        print(f"  {len(posts)} Posts geladen.")
 
-        post_text = f"{post['title']} {post['selftext']}"
+        post_count = 0
+        for post in posts:
+            if post["created_utc"] < cutoff_time:
+                continue
 
-        # Kommentare als einzelne Texte laden
-        comment_texts = []
-        if post["permalink"]:
-            comment_texts = fetch_comments_web(post["permalink"])
-            time.sleep(1)
+            post_count += 1
+            if post_count <= 5 or post_count % 10 == 0:
+                print(f"  Post {post_count}: {post['title'][:55]}...")
 
-        all_text = post_text + " " + " ".join(comment_texts)
+            post_text = f"{post['title']} {post['selftext']}"
 
-        for symbol in symbols:
-            pattern = PATTERN_TEMPLATE.format(symbol=re.escape(symbol))
-            matches = len(re.findall(pattern, all_text))
-            if matches > 0:
-                symbol_counts[symbol] += matches
-                print(f"  -> {symbol}: {matches} Treffer")
+            comment_texts = []
+            if post["permalink"]:
+                comment_texts = fetch_comments_web(post["permalink"])
+                time.sleep(1)
 
-                # Snippets sammeln (aus Post und Kommentaren)
-                if len(symbol_snippets[symbol]) < MAX_SNIPPETS:
-                    snip = extract_snippet(post_text, symbol)
-                    if snip:
-                        symbol_snippets[symbol].append(snip)
-                    for ct in comment_texts:
-                        if len(symbol_snippets[symbol]) >= MAX_SNIPPETS:
-                            break
-                        snip = extract_snippet(ct, symbol)
+            all_text = post_text + " " + " ".join(comment_texts)
+
+            for symbol in symbols:
+                pattern = PATTERN_TEMPLATE.format(symbol=re.escape(symbol))
+                matches = len(re.findall(pattern, all_text))
+                if matches > 0:
+                    symbol_counts[symbol] += matches
+
+                    if len(symbol_snippets[symbol]) < MAX_SNIPPETS:
+                        snip = extract_snippet(post_text, symbol)
                         if snip:
                             symbol_snippets[symbol].append(snip)
+                        for ct in comment_texts:
+                            if len(symbol_snippets[symbol]) >= MAX_SNIPPETS:
+                                break
+                            snip = extract_snippet(ct, symbol)
+                            if snip:
+                                symbol_snippets[symbol].append(snip)
 
-    return post_count, symbol_counts, dict(symbol_snippets)
+        total_post_count += post_count
+        print(f"  {post_count} Posts analysiert (r/{subreddit})")
+
+    return total_post_count, symbol_counts, dict(symbol_snippets)
 
 
 # ============================================================
 # API MODUS
 # ============================================================
 
-def crawl_api(symbols):
+def crawl_api(symbols, subreddits=None, posts_per_sub=100):
     import praw
     from dotenv import load_dotenv
+
+    if subreddits is None:
+        subreddits = ["wallstreetbets"]
 
     print("Modus: Reddit API (PRAW)\n")
 
@@ -228,56 +290,74 @@ def crawl_api(symbols):
 
     symbol_counts = Counter()
     symbol_snippets = defaultdict(list)
-    subreddit = reddit.subreddit("wallstreetbets")
     cutoff_time = datetime.now() - timedelta(days=1)
+    total_post_count = 0
 
-    post_count = 0
-    for post in subreddit.new(limit=100):
-        post_time = datetime.fromtimestamp(post.created_utc)
-        if post_time < cutoff_time:
+    for sub_name in subreddits:
+        print(f"\n--- r/{sub_name} ---")
+        try:
+            subreddit = reddit.subreddit(sub_name)
+            post_count = 0
+
+            for post in subreddit.new(limit=posts_per_sub):
+                post_time = datetime.fromtimestamp(post.created_utc)
+                if post_time < cutoff_time:
+                    continue
+
+                post_count += 1
+                if post_count <= 5 or post_count % 10 == 0:
+                    print(f"  Post {post_count}: {post.title[:55]}...")
+
+                post_text = f"{post.title} {post.selftext}"
+                comment_texts = []
+
+                try:
+                    post.comments.replace_more(limit=30)
+                    for comment in post.comments.list():
+                        comment_texts.append(comment.body)
+                except Exception:
+                    pass
+
+                all_text = post_text + " " + " ".join(comment_texts)
+
+                for symbol in symbols:
+                    pattern = PATTERN_TEMPLATE.format(symbol=re.escape(symbol))
+                    matches = len(re.findall(pattern, all_text))
+                    if matches > 0:
+                        symbol_counts[symbol] += matches
+
+                        if len(symbol_snippets[symbol]) < MAX_SNIPPETS:
+                            snip = extract_snippet(post_text, symbol)
+                            if snip:
+                                symbol_snippets[symbol].append(snip)
+                            for ct in comment_texts:
+                                if len(symbol_snippets[symbol]) >= MAX_SNIPPETS:
+                                    break
+                                snip = extract_snippet(ct, symbol)
+                                if snip:
+                                    symbol_snippets[symbol].append(snip)
+
+            total_post_count += post_count
+            print(f"  {post_count} Posts analysiert (r/{sub_name})")
+
+        except Exception as e:
+            print(f"  WARNUNG: r/{sub_name} nicht erreichbar: {e}")
             continue
 
-        post_count += 1
-        print(f"Post {post_count}: {post.title[:60]}...")
-
-        post_text = f"{post.title} {post.selftext}"
-        comment_texts = []
-
-        post.comments.replace_more(limit=30)
-        for comment in post.comments.list():
-            comment_texts.append(comment.body)
-
-        all_text = post_text + " " + " ".join(comment_texts)
-
-        for symbol in symbols:
-            pattern = PATTERN_TEMPLATE.format(symbol=re.escape(symbol))
-            matches = len(re.findall(pattern, all_text))
-            if matches > 0:
-                symbol_counts[symbol] += matches
-                print(f"  -> {symbol}: {matches} Treffer")
-
-                if len(symbol_snippets[symbol]) < MAX_SNIPPETS:
-                    snip = extract_snippet(post_text, symbol)
-                    if snip:
-                        symbol_snippets[symbol].append(snip)
-                    for ct in comment_texts:
-                        if len(symbol_snippets[symbol]) >= MAX_SNIPPETS:
-                            break
-                        snip = extract_snippet(ct, symbol)
-                        if snip:
-                            symbol_snippets[symbol].append(snip)
-
-    return post_count, symbol_counts, dict(symbol_snippets)
+    return total_post_count, symbol_counts, dict(symbol_snippets)
 
 
 # ============================================================
 # HAUPTFUNKTION
 # ============================================================
 
-def reddit_crawler():
+def reddit_crawler(categories_to_run=None):
+    """Crawlt alle konfigurierten Kategorien."""
     run_id = datetime.now().strftime("%y%m%d-%H%M")
-    print("=== Reddit-Crawler gestartet ===")
+    print("=" * 60)
+    print("Reddit-Crawler gestartet")
     print(f"Run-ID: {run_id}")
+    print("=" * 60)
 
     if not os.path.exists(SYMBOLS_FILE):
         print(f"\nFEHLER: {SYMBOLS_FILE} nicht gefunden.")
@@ -288,43 +368,71 @@ def reddit_crawler():
         all_symbols = pickle.load(f)
 
     symbols = [s for s in all_symbols if s not in BLACKLIST]
-    print(f"Suche nach {len(symbols)} Symbolen in r/wallstreetbets...")
+    print(f"\n{len(symbols)} Tickersymbole geladen.")
 
-    if has_api_credentials():
-        post_count, symbol_counts, symbol_snippets = crawl_api(symbols)
-    else:
+    if categories_to_run is None:
+        categories_to_run = list(CATEGORIES.keys())
+
+    use_api = has_api_credentials()
+    if not use_api:
         print("Keine API-Credentials gefunden - verwende Web-Scraping.\n")
-        post_count, symbol_counts, symbol_snippets = crawl_web_scraping(symbols)
 
-    print(f"\nSuche abgeschlossen. {post_count} Posts durchsucht.")
+    for cat_key in categories_to_run:
+        cat = CATEGORIES[cat_key]
+        print(f"\n{'=' * 60}")
+        print(f"Kategorie: {cat['label']}")
+        print(f"Subreddits: {', '.join('r/' + s for s in cat['subreddits'])}")
+        print(f"{'=' * 60}")
 
-    filtered_results = {s: c for s, c in symbol_counts.items() if c > 5}
+        if use_api:
+            post_count, symbol_counts, symbol_snippets = crawl_api(
+                symbols,
+                subreddits=cat["subreddits"],
+                posts_per_sub=cat["posts_per_sub"],
+            )
+        else:
+            post_count, symbol_counts, symbol_snippets = crawl_web_scraping(
+                symbols,
+                subreddits=cat["subreddits"],
+                posts_per_sub=cat["posts_per_sub"],
+            )
 
-    if filtered_results:
-        os.makedirs(PICKLE_DIR, exist_ok=True)
+        print(f"\n{post_count} Posts durchsucht fuer {cat['label']}.")
 
-        # Snippets nur fuer gefilterte Symbole behalten
-        filtered_snippets = {s: symbol_snippets.get(s, []) for s in filtered_results}
+        min_mentions = cat["min_mentions"]
+        filtered_results = {s: c for s, c in symbol_counts.items() if c > min_mentions}
 
-        result_data = {
-            "run_id": run_id,
-            "results": filtered_results,
-            "snippets": filtered_snippets,
-            "total_posts": post_count,
-        }
+        if filtered_results:
+            os.makedirs(PICKLE_DIR, exist_ok=True)
+            filtered_snippets = {s: symbol_snippets.get(s, []) for s in filtered_results}
 
-        filename = f"{run_id}_crawler-ergebnis.pkl"
-        filepath = os.path.join(PICKLE_DIR, filename)
+            result_data = {
+                "run_id": run_id,
+                "category": cat_key,
+                "category_label": cat["label"],
+                "results": filtered_results,
+                "snippets": filtered_snippets,
+                "total_posts": post_count,
+            }
 
-        with open(filepath, "wb") as f:
-            pickle.dump(result_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+            filename = f"{run_id}_{cat['pickle_suffix']}_crawler-ergebnis.pkl"
+            filepath = os.path.join(PICKLE_DIR, filename)
 
-        print(f"\nErgebnisse gespeichert: {filename}")
-        print(f"{len(filtered_results)} Symbole mit >5 Treffern:")
-        for symbol, count in sorted(filtered_results.items(), key=lambda x: x[1], reverse=True):
-            print(f"  {symbol}: {count} Treffer")
-    else:
-        print("\nKeine Symbole mit >5 Treffern gefunden.")
+            with open(filepath, "wb") as f:
+                pickle.dump(result_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+            print(f"\nErgebnisse gespeichert: {filename}")
+            print(f"{len(filtered_results)} Symbole mit >{min_mentions} Treffern:")
+            for symbol, count in sorted(filtered_results.items(), key=lambda x: x[1], reverse=True)[:15]:
+                print(f"  {symbol}: {count} Treffer")
+            if len(filtered_results) > 15:
+                print(f"  ... und {len(filtered_results) - 15} weitere")
+        else:
+            print(f"\nKeine Symbole mit >{min_mentions} Treffern in {cat['label']}.")
+
+    print(f"\n{'=' * 60}")
+    print("Crawler abgeschlossen.")
+    print(f"{'=' * 60}")
 
 
 if __name__ == "__main__":
