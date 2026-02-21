@@ -1,5 +1,5 @@
 """
-04 - Reddit-Crawler fuer Aktien-Analyse
+04 - GoldGräber: Reddit-Crawler fuer Aktien-Analyse
 Durchsucht mehrere Subreddits nach Tickersymbolen in drei Kategorien:
   - WSB Top-5:     r/wallstreetbets (Momentum-Analyse)
   - Meme-Aktien:   Short-Squeeze & Pennystock Communities
@@ -355,7 +355,7 @@ def reddit_crawler(categories_to_run=None):
     """Crawlt alle konfigurierten Kategorien."""
     run_id = datetime.now().strftime("%y%m%d-%H%M")
     print("=" * 60)
-    print("Reddit-Crawler gestartet")
+    print("GoldGräber — Reddit-Crawler gestartet")
     print(f"Run-ID: {run_id}")
     print("=" * 60)
 

@@ -34,7 +34,7 @@ Register-ScheduledTask `
     -Action $action `
     -Trigger $trigger `
     -Settings $settings `
-    -Description "WSB Aktien-Crawler: Woechentlicher E-Mail-Report mit Kaufempfehlungen" `
+    -Description "GoldGräber: Woechentlicher E-Mail-Report mit Kaufempfehlungen" `
     -RunLevel Limited
 
 Write-Host ""

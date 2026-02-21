@@ -1,4 +1,4 @@
-# Reddit Aktien-Crawler - Alle 14 Tage Task Scheduler Einrichtung
+# GoldGräber - Alle 14 Tage Task Scheduler Einrichtung
 # Dieses Skript als Administrator ausfuehren:
 #   Rechtsklick > "Mit PowerShell ausfuehren"
 #
@@ -43,7 +43,7 @@ Register-ScheduledTask `
     -Action $action `
     -Trigger $trigger `
     -Settings $settings `
-    -Description "Reddit Aktien-Crawler: Alle 14 Tage Crawling + Dashboard + E-Mail (WSB, Meme, Multi-Bagger)" `
+    -Description "GoldGräber: Alle 14 Tage Crawling + Dashboard + E-Mail (WSB, Meme, Multi-Bagger)" `
     -RunLevel Limited
 
 Write-Host ""

@@ -223,7 +223,7 @@ def build_email_html(data):
             Alle Daten basieren auf Reddit-Erwaechnungen und automatischer Sentiment-Analyse.
             Eigene Recherche ist unbedingt erforderlich. Investitionen bergen Risiken bis hin zum Totalverlust.
             <br><br>
-            Generiert von Reddit Aktien-Crawler Dashboard &mdash; WSB &bull; Meme &bull; Multi-Bagger
+            Generiert von GoldGräber Dashboard &mdash; WSB &bull; Meme &bull; Multi-Bagger
         </div>
     </div>
     </body>

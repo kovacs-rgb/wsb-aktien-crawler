@@ -30,7 +30,7 @@ def email_configured():
 
 def main():
     print("=" * 50)
-    print("Reddit-Crawler + Excel + Dashboard + E-Mail")
+    print("GoldGräber — Crawler + Excel + Dashboard + E-Mail")
     print("=" * 50)
 
     for script_name, label in STEPS:
