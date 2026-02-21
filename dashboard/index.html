@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reddit Aktien-Crawler</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Firebase Auth wird als ES-Module am Ende der Seite geladen -->
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Montserrat',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh;overflow-x:hidden}
@@ -503,12 +503,31 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+// ============================================================
+// FIREBASE AUTH
+// ============================================================
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js';
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDwHNBqyABKCfbKNpsA-2RiMy_yT0nc2rI",
+    authDomain: "wsb-aktien-crawler.firebaseapp.com",
+    projectId: "wsb-aktien-crawler",
+    storageBucket: "wsb-aktien-crawler.firebasestorage.app",
+    messagingSenderId: "1090122562327",
+    appId: "1:1090122562327:web:c8babbc6bbfbe669639552"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const googleProvider = new GoogleAuthProvider();
+
 // ============================================================
 // CONFIG
 // ============================================================
 const WHITELIST = ['infokovacs@googlemail.com'];
-const GOOGLE_CLIENT_ID = ''; // Optional: Google OAuth Client ID
 
 const sparkColorsWSB = ['#4d65ff','#a855f7','#06b6d4','#ec4899','#22c55e'];
 const sparkColorsMeme = ['#ef4444','#f97316','#f59e0b','#f43f5e','#e11d48'];
@@ -531,73 +550,79 @@ let splitPcts = {wsb:50, meme:25, multibagger:25};
 let currentUser = null;
 
 // ============================================================
-// LOGIN
+// FIREBASE AUTH FUNCTIONS
 // ============================================================
-function checkSavedLogin() {
-    const saved = localStorage.getItem('crawler_user');
-    if (saved) {
-        try {
-            currentUser = JSON.parse(saved);
-            if (WHITELIST.includes(currentUser.email)) {
-                showApp();
-                return;
-            }
-        } catch(e) {}
-    }
-    document.getElementById('login-screen').classList.remove('hidden');
-}
 
-function handleGoogleLogin() {
-    // If no Google Client ID, use simple email-based auth
-    if (!GOOGLE_CLIENT_ID) {
-        // Fallback: direct login for whitelisted user
-        const email = prompt('Bitte gib deine Gmail-Adresse ein:');
-        if (email && WHITELIST.includes(email.toLowerCase().trim())) {
-            currentUser = {email: email.toLowerCase().trim(), name: email.split('@')[0], picture: ''};
-            localStorage.setItem('crawler_user', JSON.stringify(currentUser));
-            showApp();
-        } else if (email) {
+// Expose functions to global scope for onclick handlers
+window.handleGoogleLogin = async function() {
+    const loginBtn = document.getElementById('google-login-btn');
+    loginBtn.disabled = true;
+    loginBtn.style.opacity = '0.6';
+    document.getElementById('login-error').style.display = 'none';
+
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        const email = user.email.toLowerCase();
+
+        if (!WHITELIST.includes(email)) {
+            // Nicht autorisiert — sofort ausloggen
+            await signOut(auth);
+            document.getElementById('login-error').style.display = 'block';
+            loginBtn.disabled = false;
+            loginBtn.style.opacity = '1';
+            return;
+        }
+        // Auth-State-Change handled den Rest
+    } catch (error) {
+        console.error('Login-Fehler:', error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+            document.getElementById('login-error').textContent = 'Login fehlgeschlagen: ' + error.message;
             document.getElementById('login-error').style.display = 'block';
         }
-        return;
+        loginBtn.disabled = false;
+        loginBtn.style.opacity = '1';
     }
+};
 
-    google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-    });
-    google.accounts.id.prompt();
-}
-
-function handleCredentialResponse(response) {
-    const payload = parseJwt(response.credential);
-    if (payload && WHITELIST.includes(payload.email.toLowerCase())) {
-        currentUser = {email: payload.email, name: payload.name, picture: payload.picture};
-        localStorage.setItem('crawler_user', JSON.stringify(currentUser));
+// Firebase Auth State Listener — reagiert auf Login/Logout
+onAuthStateChanged(auth, (user) => {
+    if (user && WHITELIST.includes(user.email.toLowerCase())) {
+        currentUser = {
+            email: user.email,
+            name: user.displayName || user.email.split('@')[0],
+            picture: user.photoURL || ''
+        };
         showApp();
     } else {
-        document.getElementById('login-error').style.display = 'block';
+        // Nicht eingeloggt oder nicht autorisiert
+        currentUser = null;
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('startup-overlay').classList.add('hidden');
     }
-}
-
-function parseJwt(token) {
-    try {
-        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
-    } catch(e) { return null; }
-}
+});
 
 function showApp() {
     document.getElementById('login-screen').classList.add('hidden');
 
-    // Show startup animation
+    // Show startup animation (nur beim ersten Mal)
     const overlay = document.getElementById('startup-overlay');
-    overlay.classList.remove('hidden');
-    playStartupSound();
+    if (!window._startupShown) {
+        window._startupShown = true;
+        overlay.classList.remove('hidden');
+        playStartupSound();
+        setTimeout(() => {
+            overlay.classList.add('fade-out');
+            document.getElementById('main-app').style.display = 'block';
+            setTimeout(() => { overlay.classList.add('hidden'); }, 600);
+        }, 2500);
+    } else {
+        document.getElementById('main-app').style.display = 'block';
+    }
 
     // Update nav user
     if (currentUser) {
-        const navUser = document.getElementById('nav-user');
         const avatar = document.getElementById('nav-avatar');
         if (currentUser.picture) {
             avatar.src = currentUser.picture;
@@ -606,20 +631,12 @@ function showApp() {
         }
     }
 
-    // Fade out after 2.5s
-    setTimeout(() => {
-        overlay.classList.add('fade-out');
-        document.getElementById('main-app').style.display = 'block';
-        setTimeout(() => { overlay.classList.add('hidden'); }, 600);
-    }, 2500);
-
     loadDashboard();
 }
 
 function playStartupSound() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        // Chord: C-E-G
         [261.63, 329.63, 392.00].forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -633,7 +650,6 @@ function playStartupSound() {
             osc.start(ctx.currentTime + i * 0.15);
             osc.stop(ctx.currentTime + 2.5);
         });
-        // High shimmer
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.type = 'triangle';
@@ -648,15 +664,18 @@ function playStartupSound() {
     } catch(e) {}
 }
 
-function doLogout() {
-    localStorage.removeItem('crawler_user');
-    currentUser = null;
-    location.reload();
-}
+window.doLogout = async function() {
+    try {
+        await signOut(auth);
+    } catch(e) {
+        console.error('Logout-Fehler:', e);
+    }
+    // onAuthStateChanged handled UI-Reset
+};
 
-function toggleUserMenu() {
+window.toggleUserMenu = function() {
     document.getElementById('user-menu').classList.toggle('active');
-}
+};
 
 // Close user menu on outside click
 document.addEventListener('click', function(e) {
@@ -812,7 +831,7 @@ async function loadDashboard() {
     }
 }
 
-async function refreshData() {
+window.refreshData = async function() {
     const btn = document.getElementById('refresh-btn');
     btn.classList.add('loading');
     btn.textContent = '';
@@ -955,7 +974,7 @@ function renderCategoryTop5(catKey, gridId, data) {
     }).join('');
 }
 
-function switchHoverTab(btn, period, idx, catKey) {
+window.switchHoverTab = function(btn, period, idx, catKey) {
     // Update active tab
     btn.parentElement.querySelectorAll('.hover-chart-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -975,7 +994,7 @@ function switchHoverTab(btn, period, idx, catKey) {
 // ============================================================
 // CHART MODAL
 // ============================================================
-function openChartModal(catKey, idx) {
+window.openChartModal = function(catKey, idx) {
     const catData = dashData.categories[catKey];
     if(!catData) return;
     const item = catData.top5[idx];
@@ -1041,8 +1060,8 @@ function openChartModal(catKey, idx) {
     document.getElementById('chart-modal').classList.add('active');
 }
 
-function closeChartModal() { document.getElementById('chart-modal').classList.remove('active'); }
-document.getElementById('chart-modal').addEventListener('click', function(e) { if(e.target===this) closeChartModal(); });
+window.closeChartModal = function() { document.getElementById('chart-modal').classList.remove('active'); };
+document.getElementById('chart-modal').addEventListener('click', function(e) { if(e.target===this) window.closeChartModal(); });
 
 // ============================================================
 // BUDGET
@@ -1303,26 +1322,25 @@ function renderAllSymbols(data) {
 // ============================================================
 // MODALS
 // ============================================================
-function openHelpModal() { document.getElementById('help-modal').classList.add('active'); }
-function closeHelpModal() { document.getElementById('help-modal').classList.remove('active'); }
-function openApiCostsModal() { document.getElementById('api-costs-modal').classList.add('active'); }
-function closeApiCostsModal() { document.getElementById('api-costs-modal').classList.remove('active'); }
+window.openHelpModal = function() { document.getElementById('help-modal').classList.add('active'); };
+window.closeHelpModal = function() { document.getElementById('help-modal').classList.remove('active'); };
+window.openApiCostsModal = function() { document.getElementById('api-costs-modal').classList.add('active'); };
+window.closeApiCostsModal = function() { document.getElementById('api-costs-modal').classList.remove('active'); };
 
-document.getElementById('help-modal').addEventListener('click', function(e) { if(e.target===this) closeHelpModal(); });
-document.getElementById('api-costs-modal').addEventListener('click', function(e) { if(e.target===this) closeApiCostsModal(); });
+document.getElementById('help-modal').addEventListener('click', function(e) { if(e.target===this) window.closeHelpModal(); });
+document.getElementById('api-costs-modal').addEventListener('click', function(e) { if(e.target===this) window.closeApiCostsModal(); });
 
 document.addEventListener('keydown', function(e) {
     if(e.key==='Escape') {
-        closeChartModal();
-        closeHelpModal();
-        closeApiCostsModal();
+        window.closeChartModal();
+        window.closeHelpModal();
+        window.closeApiCostsModal();
     }
 });
 
 // ============================================================
-// INIT
+// INIT — Firebase onAuthStateChanged handled Login automatisch
 // ============================================================
-checkSavedLogin();
 </script>
 </body>
 </html>
