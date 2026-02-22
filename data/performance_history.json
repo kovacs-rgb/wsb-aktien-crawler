@@ -1,0 +1,141 @@
+{
+  "records": [
+    {
+      "symbol": "OPEN",
+      "category": "wsb",
+      "rec_date": "2026-02-22",
+      "rec_price": 5.0,
+      "current_price": 5.0,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "PLTR",
+      "category": "wsb",
+      "rec_date": "2026-02-22",
+      "rec_price": 135.24,
+      "current_price": 135.24,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "DPZ",
+      "category": "wsb",
+      "rec_date": "2026-02-22",
+      "rec_price": 384.61,
+      "current_price": 384.61,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "QQQ",
+      "category": "wsb",
+      "rec_date": "2026-02-22",
+      "rec_price": 608.81,
+      "current_price": 608.81,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "NVDA",
+      "category": "wsb",
+      "rec_date": "2026-02-22",
+      "rec_price": 189.82,
+      "current_price": 189.82,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "GME",
+      "category": "meme",
+      "rec_date": "2026-02-22",
+      "rec_price": 23.43,
+      "current_price": 23.43,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "MULN",
+      "category": "meme",
+      "rec_date": "2026-02-22",
+      "rec_price": null,
+      "current_price": null,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "AMC",
+      "category": "meme",
+      "rec_date": "2026-02-22",
+      "rec_price": 1.2,
+      "current_price": 1.2,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "FFIE",
+      "category": "meme",
+      "rec_date": "2026-02-22",
+      "rec_price": null,
+      "current_price": null,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "FNGR",
+      "category": "meme",
+      "rec_date": "2026-02-22",
+      "rec_price": 1.11,
+      "current_price": 1.11,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "CRDO",
+      "category": "multibagger",
+      "rec_date": "2026-02-22",
+      "rec_price": 124.06,
+      "current_price": 124.06,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "PLTR",
+      "category": "multibagger",
+      "rec_date": "2026-02-22",
+      "rec_price": 135.24,
+      "current_price": 135.24,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "SEZL",
+      "category": "multibagger",
+      "rec_date": "2026-02-22",
+      "rec_price": 62.75,
+      "current_price": 62.75,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "HUT",
+      "category": "multibagger",
+      "rec_date": "2026-02-22",
+      "rec_price": 53.82,
+      "current_price": 53.82,
+      "pct_change": 0.0
+    },
+    {
+      "symbol": "APP",
+      "category": "multibagger",
+      "rec_date": "2026-02-22",
+      "rec_price": 418.68,
+      "current_price": 418.68,
+      "pct_change": 0.0
+    }
+  ],
+  "stats": {
+    "total_recommendations": 13,
+    "winners": 0,
+    "losers": 0,
+    "win_rate_pct": 0.0,
+    "avg_return_pct": 0.0,
+    "best": {
+      "symbol": "OPEN",
+      "pct": 0.0,
+      "date": "2026-02-22"
+    },
+    "worst": {
+      "symbol": "OPEN",
+      "pct": 0.0,
+      "date": "2026-02-22"
+    }
+  }
+}
