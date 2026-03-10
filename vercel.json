@@ -3,6 +3,7 @@
   "buildCommand": "",
   "framework": null,
   "rewrites": [
+    { "source": "/api/trigger", "destination": "/api/trigger" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

@@ -682,11 +682,52 @@ window.refreshData = async function() {
     const btn = document.getElementById('refresh-btn');
     btn.classList.add('loading'); btn.textContent = '';
     try {
-        const resp = await fetch('data.json?t='+Date.now());
-        if(!resp.ok) throw new Error('Fehler');
-        dashData = await resp.json(); render(dashData);
-    } catch(e) { alert('Fehler beim Laden der Daten.'); }
-    btn.classList.remove('loading'); btn.textContent = '\u{1F504} Aktualisieren';
+        // Pipeline auf GitHub Actions triggern
+        const triggerResp = await fetch('/api/trigger', { method: 'POST' });
+        const triggerData = await triggerResp.json();
+        if (!triggerResp.ok) throw new Error(triggerData.error || 'Trigger fehlgeschlagen');
+
+        btn.textContent = '\u23F3 Pipeline laeuft...';
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        // Alle 30s pruefen ob neue Daten da sind (max 10 Min)
+        const startStand = dashData?.generated || '';
+        let attempts = 0;
+        const maxAttempts = 20;
+        const checkInterval = setInterval(async () => {
+            attempts++;
+            try {
+                const resp = await fetch('data.json?t='+Date.now());
+                if (resp.ok) {
+                    const newData = await resp.json();
+                    if (newData.generated && newData.generated !== startStand) {
+                        clearInterval(checkInterval);
+                        dashData = newData;
+                        render(dashData);
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.classList.remove('loading');
+                        btn.textContent = '\u2705 Aktualisiert!';
+                        setTimeout(() => { btn.textContent = '\u{1F504} Aktualisieren'; }, 3000);
+                        return;
+                    }
+                }
+            } catch(e) {}
+            if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.classList.remove('loading');
+                btn.textContent = '\u{1F504} Aktualisieren';
+                alert('Pipeline laeuft noch. Seite in ein paar Minuten neu laden.');
+            }
+        }, 30000);
+    } catch(e) {
+        alert('Fehler: ' + e.message);
+        btn.classList.remove('loading');
+        btn.textContent = '\u{1F504} Aktualisieren';
+    }
 };
 
 // ============================================================

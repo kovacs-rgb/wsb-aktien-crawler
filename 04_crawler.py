@@ -46,6 +46,8 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 SNIPPET_CHARS = 300
 # Max Snippets pro Symbol
 MAX_SNIPPETS = 20
+# Alte Pickle-Dateien nach X Tagen loeschen
+PICKLE_MAX_AGE_DAYS = 14
 
 # ============================================================
 # KATEGORIEN-KONFIGURATION
@@ -348,6 +350,30 @@ def crawl_api(symbols, subreddits=None, posts_per_sub=100):
 
 
 # ============================================================
+# CLEANUP
+# ============================================================
+
+def cleanup_old_pickles(max_age_days=PICKLE_MAX_AGE_DAYS):
+    """Loescht Pickle-Dateien aelter als max_age_days."""
+    if not os.path.exists(PICKLE_DIR):
+        return
+
+    cutoff = time.time() - (max_age_days * 86400)
+    removed = 0
+
+    for filename in os.listdir(PICKLE_DIR):
+        if not filename.endswith(".pkl"):
+            continue
+        filepath = os.path.join(PICKLE_DIR, filename)
+        if os.path.getmtime(filepath) < cutoff:
+            os.remove(filepath)
+            removed += 1
+
+    if removed:
+        print(f"\nAuto-Cleanup: {removed} Pickle-Datei(en) aelter als {max_age_days} Tage geloescht.")
+
+
+# ============================================================
 # HAUPTFUNKTION
 # ============================================================
 
@@ -429,6 +455,9 @@ def reddit_crawler(categories_to_run=None):
                 print(f"  ... und {len(filtered_results) - 15} weitere")
         else:
             print(f"\nKeine Symbole mit >{min_mentions} Treffern in {cat['label']}.")
+
+    # Auto-Cleanup: Alte Pickle-Dateien loeschen
+    cleanup_old_pickles()
 
     print(f"\n{'=' * 60}")
     print("Crawler abgeschlossen.")
