@@ -100,6 +100,10 @@ html.light .google-btn{background:#fff;border:1px solid var(--border);box-shadow
 .broker-flatex:hover{background:rgba(59,130,246,.25)}
 .broker-jt{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
 .broker-jt:hover{background:rgba(34,197,94,.25)}
+.broker-tr{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15)}
+.broker-tr:hover{background:rgba(255,255,255,.15)}
+.broker-sc{background:rgba(236,72,153,.15);color:#ec4899;border:1px solid rgba(236,72,153,.2)}
+.broker-sc:hover{background:rgba(236,72,153,.25)}
 
 /* POTENTIAL */
 .potential-badge{font-size:.55rem;color:rgba(255,255,255,.15);margin-top:.3rem}
@@ -391,7 +395,7 @@ html.light .theme-switch::after{transform:translateX(16px);background:#6366f1}
         <li><strong>Scoring:</strong> Jede Aktie bekommt einen Score (0-100) basierend auf Reddit-Aktivit&auml;t</li>
         <li><strong>Risiko-Score:</strong> Totalverlust-Wahrscheinlichkeit 1-10 (gr&uuml;n/gelb/rot)</li>
         <li><strong>ISIN/WKN:</strong> Zum einfachen Suchen bei jedem Broker</li>
-        <li><strong>Dual-Broker:</strong> Kauflinks f&uuml;r Flatex UND JustTrade</li>
+        <li><strong>4 Broker:</strong> Kauflinks f&uuml;r Flatex, JustTrade, Trade Republic &amp; Scalable Capital</li>
         <li><strong>KI-Zusammenfassung:</strong> Warum Reddit &uuml;ber diese Aktie spricht</li>
         <li><strong>Performance-Tracking:</strong> Trefferquote vergangener Empfehlungen</li>
         <li><strong>Sentiment:</strong> Bullish/Bearish Stimmung aus Reddit-Posts</li>
@@ -795,9 +799,13 @@ function renderCategoryTop5(catKey, gridId, data) {
         if(budgetAmount > 0) {
             const flatexUrl = al?.flatex_url || (isin ? `https://www.flatex.de/suche?q=${isin}` : '');
             const jtUrl = al?.justtrade_url || (isin ? `https://www.justtrade.com/suche?q=${isin}` : '');
+            const trUrl = al?.traderepublic_url || (isin ? `https://app.traderepublic.com/search/${isin}` : '');
+            const scUrl = al?.scalable_url || (isin ? `https://de.scalable.capital/broker/security?isin=${isin}` : '');
             brokerHtml = `<div class="broker-btns">`;
             if(flatexUrl) brokerHtml += `<a href="${flatexUrl}" target="_blank" class="broker-btn broker-flatex" onclick="event.stopPropagation()">${cartIcon} Flatex ${budgetAmount.toFixed(0)}\u20AC</a>`;
             if(jtUrl) brokerHtml += `<a href="${jtUrl}" target="_blank" class="broker-btn broker-jt" onclick="event.stopPropagation()">${cartIcon} JustTrade</a>`;
+            if(trUrl) brokerHtml += `<a href="${trUrl}" target="_blank" class="broker-btn broker-tr" onclick="event.stopPropagation()">${cartIcon} Trade Republic</a>`;
+            if(scUrl) brokerHtml += `<a href="${scUrl}" target="_blank" class="broker-btn broker-sc" onclick="event.stopPropagation()">${cartIcon} Scalable</a>`;
             brokerHtml += `</div>`;
         }
 
@@ -1031,9 +1039,13 @@ function renderBudgetBars(data) {
             const w=(a.weight_pct/maxPct)*100, amount=(a.weight_pct/100*catBudget).toFixed(0);
             const flatexUrl=a.flatex_url||(a.isin?`https://www.flatex.de/suche?q=${a.isin}`:'');
             const jtUrl=a.justtrade_url||(a.isin?`https://www.justtrade.com/suche?q=${a.isin}`:'');
+            const trUrl=a.traderepublic_url||(a.isin?`https://app.traderepublic.com/search/${a.isin}`:'');
+            const scUrl=a.scalable_url||(a.isin?`https://de.scalable.capital/broker/security?isin=${a.isin}`:'');
             let btns='';
             if(flatexUrl) btns+=`<a href="${flatexUrl}" target="_blank" class="budget-buy-btn broker-flatex">${cartIcon} Flatex</a>`;
             if(jtUrl) btns+=`<a href="${jtUrl}" target="_blank" class="budget-buy-btn broker-jt">${cartIcon} JT</a>`;
+            if(trUrl) btns+=`<a href="${trUrl}" target="_blank" class="budget-buy-btn broker-tr">${cartIcon} TR</a>`;
+            if(scUrl) btns+=`<a href="${scUrl}" target="_blank" class="budget-buy-btn broker-sc">${cartIcon} SC</a>`;
             return `<div class="budget-bar-row"><div class="budget-bar-label">${a.symbol}</div><div class="budget-bar-wrap"><div class="budget-bar-fill ${cfg.barPrefix}-${(i%5)+1}" style="width:${w}%">${a.weight_pct}%</div></div><div class="budget-bar-amount">${amount} EUR ${btns}</div></div>`;
         }).join('');
     });
@@ -1061,7 +1073,7 @@ function renderRanking(data) {
     allRanked.sort((a,b) => b.score - a.score);
     if(!allRanked.length) { container.innerHTML='<div class="loading">Keine Daten</div>'; return; }
 
-    let html=`<table class="data-table"><thead><tr><th>#</th><th>Symbol</th><th>Kat.</th><th>Unternehmen</th><th>Score</th><th>Risiko</th><th>ISIN</th><th>WKN</th><th>Sentiment</th><th>Potenzial</th><th>Flatex</th><th>JustTrade</th></tr></thead><tbody>`;
+    let html=`<table class="data-table"><thead><tr><th>#</th><th>Symbol</th><th>Kat.</th><th>Unternehmen</th><th>Score</th><th>Risiko</th><th>ISIN</th><th>WKN</th><th>Sentiment</th><th>Potenzial</th><th>Flatex</th><th>JustTrade</th><th>TR</th><th>Scalable</th></tr></thead><tbody>`;
     allRanked.forEach((s,i) => {
         const sentCls=s.sentiment==='bullish'?'sentiment-bullish':s.sentiment==='bearish'?'sentiment-bearish':'sentiment-neutral';
         const sentLabel=typeof s.sentiment==='object'?s.sentiment.label:(s.sentiment||'neutral');
@@ -1069,8 +1081,10 @@ function renderRanking(data) {
         const riskCls=s.risk_color==='green'?'risk-green':s.risk_color==='yellow'?'risk-yellow':'risk-red';
         const flatexLink=s.isin?`<a href="https://www.flatex.de/suche?q=${s.isin}" target="_blank" class="budget-buy-btn broker-flatex">${cartIcon}</a>`:'<span style="color:rgba(255,255,255,.12)">--</span>';
         const jtLink=s.isin?`<a href="https://www.justtrade.com/suche?q=${s.isin}" target="_blank" class="budget-buy-btn broker-jt">${cartIcon}</a>`:'<span style="color:rgba(255,255,255,.12)">--</span>';
+        const trLink=s.isin?`<a href="https://app.traderepublic.com/search/${s.isin}" target="_blank" class="budget-buy-btn broker-tr">${cartIcon}</a>`:'<span style="color:rgba(255,255,255,.12)">--</span>';
+        const scLink=s.isin?`<a href="https://de.scalable.capital/broker/security?isin=${s.isin}" target="_blank" class="budget-buy-btn broker-sc">${cartIcon}</a>`:'<span style="color:rgba(255,255,255,.12)">--</span>';
         const potential=s.potential_pct?`<span style="color:#fbbf24;font-weight:700">+${s.potential_pct.toLocaleString()}%</span>`:'<span style="color:rgba(255,255,255,.12)">--</span>';
-        html+=`<tr><td style="color:rgba(255,255,255,.25)">${i+1}</td><td style="font-weight:800">${s.symbol}</td><td><span class="section-badge ${s.badgeCls}" style="font-size:.5rem">${s.badge}</span></td><td style="font-size:.6rem;color:rgba(255,255,255,.4)">${s.company_name||''}</td><td style="font-weight:800;color:${scoreColor}">${s.score}</td><td>${s.risk_score?`<span class="risk-badge ${riskCls}">${s.risk_score}/10</span>`:'--'}</td><td style="font-family:monospace;font-size:.5rem;color:rgba(255,255,255,.3)">${s.isin||'--'}</td><td style="font-family:monospace;font-size:.5rem;color:rgba(255,255,255,.3)">${s.wkn||'--'}</td><td><span class="sentiment-badge ${sentCls}">${sentLabel}</span></td><td>${potential}</td><td>${flatexLink}</td><td>${jtLink}</td></tr>`;
+        html+=`<tr><td style="color:rgba(255,255,255,.25)">${i+1}</td><td style="font-weight:800">${s.symbol}</td><td><span class="section-badge ${s.badgeCls}" style="font-size:.5rem">${s.badge}</span></td><td style="font-size:.6rem;color:rgba(255,255,255,.4)">${s.company_name||''}</td><td style="font-weight:800;color:${scoreColor}">${s.score}</td><td>${s.risk_score?`<span class="risk-badge ${riskCls}">${s.risk_score}/10</span>`:'--'}</td><td style="font-family:monospace;font-size:.5rem;color:rgba(255,255,255,.3)">${s.isin||'--'}</td><td style="font-family:monospace;font-size:.5rem;color:rgba(255,255,255,.3)">${s.wkn||'--'}</td><td><span class="sentiment-badge ${sentCls}">${sentLabel}</span></td><td>${potential}</td><td>${flatexLink}</td><td>${jtLink}</td><td>${trLink}</td><td>${scLink}</td></tr>`;
     });
     html+='</tbody></table>';
     container.innerHTML=html;

@@ -639,6 +639,8 @@ def calculate_budget(top_symbols, budget=MONTHLY_BUDGET, score_key="momentum_sco
         if isin:
             entry["flatex_url"] = f"https://www.flatex.de/suche?q={isin}"
             entry["justtrade_url"] = f"https://www.justtrade.com/suche?q={isin}"
+            entry["traderepublic_url"] = f"https://app.traderepublic.com/search/{isin}"
+            entry["scalable_url"] = f"https://de.scalable.capital/broker/security?isin={isin}"
         result.append(entry)
     return result
 
