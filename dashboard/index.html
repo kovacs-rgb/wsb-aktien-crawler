@@ -105,6 +105,22 @@ html.light .google-btn{background:#fff;border:1px solid var(--border);box-shadow
 .broker-sc{background:rgba(236,72,153,.15);color:#ec4899;border:1px solid rgba(236,72,153,.2)}
 .broker-sc:hover{background:rgba(236,72,153,.25)}
 
+/* BROKER VERGLEICH */
+.broker-compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.broker-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;display:flex;flex-direction:column;transition:all .3s;position:relative;overflow:hidden}
+.broker-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px var(--shadow)}
+.broker-card-head{margin-bottom:.8rem}
+.broker-card-name{font-size:.9rem;font-weight:800;color:var(--text)}
+.broker-card-badge{display:inline-block;font-size:.45rem;font-weight:700;padding:.15rem .5rem;border-radius:20px;margin-top:.3rem;background:rgba(59,130,246,.15);color:#3b82f6}
+.broker-card-features{list-style:none;padding:0;margin:0 0 .8rem;font-size:.55rem;color:var(--text);line-height:1.9}
+.broker-card-highlight{font-size:.5rem;color:var(--muted);font-style:italic;margin-bottom:1rem;padding-top:.5rem;border-top:1px solid var(--border)}
+.broker-cta{display:block;text-align:center;padding:.6rem 1rem;border-radius:8px;font-size:.6rem;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:.5px;transition:all .3s;margin-top:auto}
+.broker-cta:hover{transform:scale(1.02);filter:brightness(1.15)}
+.broker-cta-flatex{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+.broker-cta-tr{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;border:1px solid rgba(255,255,255,.15)}
+.broker-cta-sc{background:linear-gradient(135deg,#ec4899,#be185d);color:#fff}
+.broker-cta-jt{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+
 /* POTENTIAL */
 .potential-badge{font-size:.55rem;color:rgba(255,255,255,.15);margin-top:.3rem}
 .potential-badge.has-data{color:#fbbf24;font-weight:700}
@@ -359,6 +375,71 @@ html.light .theme-switch::after{transform:translateX(16px);background:#6366f1}
         <div class="symbol-count" id="all-symbols-count"></div>
     </div>
     <div class="symbols-grid" id="all-symbols-grid"></div>
+</div>
+
+<!-- BROKER VERGLEICH -->
+<div class="section" id="broker-section">
+    <div class="section-title">&#x1F3E6; Depot er&ouml;ffnen &mdash; Unsere Partner-Broker</div>
+    <p style="font-size:.6rem;color:var(--muted);margin:-.3rem 0 1rem;max-width:700px">Du hast noch kein Depot? Er&ouml;ffne jetzt ein kostenloses Depot bei einem unserer Partner-Broker und handle die Top-Aktien aus dem GoldGr&auml;ber-Dashboard direkt.</p>
+    <div class="broker-compare-grid">
+        <div class="broker-card broker-card-flatex">
+            <div class="broker-card-head">
+                <div class="broker-card-name">Flatex</div>
+                <div class="broker-card-badge">Deutschlands Nr. 1</div>
+            </div>
+            <ul class="broker-card-features">
+                <li>&#x2705; Keine Depotgeb&uuml;hren</li>
+                <li>&#x2705; Ab 5,90 &euro; pro Order</li>
+                <li>&#x2705; &Uuml;ber 4.000 Sparpl&auml;ne</li>
+                <li>&#x2705; Aktien, ETFs, Derivate, Krypto</li>
+            </ul>
+            <div class="broker-card-highlight">Europas gr&ouml;&szlig;ter Online-Broker</div>
+            <a href="https://www.flatex.de" target="_blank" class="broker-cta broker-cta-flatex" id="cta-flatex">Kostenlos Depot er&ouml;ffnen &rarr;</a>
+        </div>
+        <div class="broker-card broker-card-tr">
+            <div class="broker-card-head">
+                <div class="broker-card-name">Trade Republic</div>
+                <div class="broker-card-badge" style="background:rgba(255,255,255,.1);color:#fff">Beliebtester Neo-Broker</div>
+            </div>
+            <ul class="broker-card-features">
+                <li>&#x2705; 0 &euro; Orderprovision</li>
+                <li>&#x2705; Nur 1 &euro; Fremdkostenpauschale</li>
+                <li>&#x2705; 2% Zinsen auf Guthaben</li>
+                <li>&#x2705; Aktien, ETFs, Krypto, Anleihen</li>
+            </ul>
+            <div class="broker-card-highlight">4+ Mio. Kunden in Europa</div>
+            <a href="https://traderepublic.com" target="_blank" class="broker-cta broker-cta-tr" id="cta-tr">Jetzt Depot er&ouml;ffnen &rarr;</a>
+        </div>
+        <div class="broker-card broker-card-scalable">
+            <div class="broker-card-head">
+                <div class="broker-card-name">Scalable Capital</div>
+                <div class="broker-card-badge" style="background:rgba(236,72,153,.15);color:#ec4899">Broker + Robo-Advisor</div>
+            </div>
+            <ul class="broker-card-features">
+                <li>&#x2705; FREE Broker: 0,99 &euro; pro Trade</li>
+                <li>&#x2705; PRIME+: Flatrate ab 4,99 &euro;/Mo</li>
+                <li>&#x2705; 2,6% Zinsen auf Guthaben</li>
+                <li>&#x2705; 7.800 Aktien, 2.500 ETFs</li>
+            </ul>
+            <div class="broker-card-highlight">Robo-Advisor &amp; Selbsthandel kombiniert</div>
+            <a href="https://de.scalable.capital" target="_blank" class="broker-cta broker-cta-sc" id="cta-scalable">Depot er&ouml;ffnen &rarr;</a>
+        </div>
+        <div class="broker-card broker-card-jt">
+            <div class="broker-card-head">
+                <div class="broker-card-name">JustTrade</div>
+                <div class="broker-card-badge" style="background:rgba(34,197,94,.15);color:#22c55e">0 &euro; Orderkosten</div>
+            </div>
+            <ul class="broker-card-features">
+                <li>&#x2705; 0 &euro; Ordergeb&uuml;hren komplett</li>
+                <li>&#x2705; Wertpapiere + Krypto in einem Depot</li>
+                <li>&#x2705; 10.000+ Aktien &amp; ETFs</li>
+                <li>&#x2705; 3 B&ouml;rsen: LS, Quotrix, Tradegate</li>
+            </ul>
+            <div class="broker-card-highlight">Erster Broker mit Krypto &amp; Wertpapieren</div>
+            <a href="https://www.justtrade.com" target="_blank" class="broker-cta broker-cta-jt" id="cta-justtrade">Kostenlos starten &rarr;</a>
+        </div>
+    </div>
+    <p style="font-size:.45rem;color:var(--muted);margin-top:1rem;text-align:center">* Affiliate-Links: Bei Depoteroeffnung ueber unsere Links erhalten wir eine Provision. Fuer dich entstehen keine Mehrkosten.</p>
 </div>
 
 <footer>
